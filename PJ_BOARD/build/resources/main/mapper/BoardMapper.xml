@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="BoardMapper"> <!-- 매퍼의 네임스페이스 설정 -->
+
+    <select id="getBoardById" parameterType="string" resultType="model.board.Board"> <!--받는값 String 소문자작성, 리턴값데이터타입-->
+	        SELECT 
+			    BOARD_ID,
+			    TITLE,
+			    CONTENT,
+			    VIEW_COUNT,
+			    CREATE_ID,
+			    UPDATE_ID,
+			    CREATE_DT,
+			    UPDATE_DT,
+			    DEL_YN
+			FROM BOARD
+			WHERE board_id = #{boardId} 
+    </select>
+
+	<!-- 사용자 생성 -->
+    <insert id="create" parameterType="model.board.Board"> <!--  @여기에 넣어짐 -->
+        	INSERT INTO BOARD
+        	(
+			    BOARD_ID,
+			    TITLE,
+			    CONTENT,
+			    VIEW_COUNT,
+			    CREATE_ID,
+			    CREATE_DT
+			    )
+			    VALUES
+			    (
+			    SEQ_BOARD.NEXTVAL,
+			    #{title},
+			    #{content},
+			    #{viewCount},
+			    #{createId},
+			    SYSDATE
+			  )
+	<selectKey keyProperty="boardId" resultType="string" order="AFTER">
+	   SELECT SEQ_BOARD.CURRVAL FROM DUAL
+	</selectKey>
+		   
+    </insert>
+    <update id="update" parameterType="model.board.Board">
+    	    UPDATE BOARD
+    	    SET TITLE = #{title},
+    	    	CONTENT = #{content},
+    	    	VIEW_COUNT = #{viewCount},
+    	    	UPDATE_ID = #{updateId},
+    	    	UPDATE_DT = SYSDATE
+    	    WHERE BOARD_ID = #{boardId}	
+    </update>
+    <update id="delete" parameterType="model.board.Board">
+    	    UPDATE BOARD
+    	    SET DEL_YN = 'Y',  
+    	    	UPDATE_ID = #{updateId},
+    	    	UPDATE_DT = SYSDATE
+    	    WHERE BOARD_ID = #{boardId}	
+    </update>
+</mapper>
