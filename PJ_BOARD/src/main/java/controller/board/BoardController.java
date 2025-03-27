@@ -7,6 +7,8 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
+
+import exception.HException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -70,6 +72,7 @@ public class BoardController extends HttpServlet {
 	    	  int size = request.getParameter("size") != null ?
 	    			  Integer.parseInt(request.getParameter("size"))
 	    			  : DEFAULT_SIZE;
+	    	  
 	    	  Board board = new Board();
 	    	  board.setSize(size);
 	    	  board.setPage(page);
@@ -193,9 +196,17 @@ public class BoardController extends HttpServlet {
             	jsonResponse.put("message", isSuccess ? "댓글 삭제 성공" : "댓글 삭제 실패"); //응답 메시지
             }
         } catch (Exception e) {
-            jsonResponse.put("success", false); // 오류 발생 시
-            jsonResponse.put("message", "서버 오류 발생"); // 오류 메시지
-            logger.error("Error in BoardController doPost", e); // 오류 로그 추가
+        	if(e instanceof HException) {
+        		e.printStackTrace();
+        		jsonResponse.put("success", false); // 논리 오류때문, 코드값이 안맞음, 맞지 않는 코드값잡기, throw날려서 잡기
+        		jsonResponse.put("message", ((HException)e).getMessage());
+        		logger.error("Error in BoardController doPost", ((HException)e).getMessage()); // 오류 로그 추가
+        	} else {
+        		jsonResponse.put("success", false); // 오류 발생 시
+                jsonResponse.put("message", "서버 오류 발생"); // 오류 메시지
+                logger.error("Error in BoardController doPost", e); // 오류 로그 추가
+        	}
+            
         }
         
         logger.info("jsonResponse.toString() : ", jsonResponse.toString()); 

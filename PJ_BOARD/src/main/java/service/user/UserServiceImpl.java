@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import dao.user.UserDAO;
 import model.user.User;
 import util.MybatisUtil;
+import util.SHA256Util;
 
 public class UserServiceImpl implements UserService {// 보안때문, 인터페이스 호출, 스프링때문에 생긴이유
     private static final Logger logger = LogManager.getLogger(UserServiceImpl.class);
@@ -39,7 +40,11 @@ public class UserServiceImpl implements UserService {// 보안때문, 인터페�
     public boolean registerUser(User user) {
     	SqlSession session = sqlSessionFactory.openSession();
     	boolean result = false; 
-    	try {
+    	try {// 암호화 시키기
+    		String password = user.getPassword();
+    		String encryptedpPassword = password != null ? SHA256Util.encrypt(password) : null;
+    		user.setPassword(encryptedpPassword);
+    		
     		// DAO를 통해 회원가입 진행
             result = userDAO.registerUser(session, user);
             session.commit(); // 트랜잭션 커밋,통신 채널 넣음, 넘겨줌
@@ -62,8 +67,11 @@ public class UserServiceImpl implements UserService {// 보안때문, 인터페�
 			if(selectUser == null) {
 				return false; // 사용자 ID가 존재하지 않을 경우
 			}
-			// 입력된 비밀번호와 DB에 저장된 비밀번호 비교
-			result =  user.getPassword()
+			String password = user.getPassword();
+    		String encryptedpPassword = password != null ? SHA256Util.encrypt(password) : null;
+			
+    		// 입력된 비밀번호와 DB에 저장된 비밀번호 비교
+			result =  encryptedpPassword
 			.equals(selectUser.getPassword()); // 비밀번호 비교
 			
 			session.commit(); // 트랜잭션 커밋

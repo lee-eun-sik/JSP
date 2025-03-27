@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import dao.board.BoardDAO;
 import dao.file.FileDAO;
+import exception.HException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.Part;
 import model.board.Board;
@@ -53,7 +54,7 @@ public class BoardServiceImpl implements BoardService {// 보안때문, 인터�
 	 }
 	 
 	  @Override
-	    public boolean createBoard(Board board,HttpServletRequest request) {
+	    public boolean createBoard(Board board,HttpServletRequest request) throws HException {
 	    	SqlSession session = sqlSessionFactory.openSession();
 	    	boolean result = false; 
 	    	try {
@@ -69,16 +70,17 @@ public class BoardServiceImpl implements BoardService {// 보안때문, 인터�
 				
 				// 업로드된 파일들을 처리하여 PostFile 객체 리스트 반환
 				List<PostFile> fileList = FileUploadUtil.uploadFiles(fileParts, "board", Integer.parseInt(board.getBoardId()), board.getCreateId());
-			
+				
 				for (PostFile postFile : fileList) {
 					fileDAO.insertBoardFile(session, postFile);
 				}
 	    		// DAO를 통해 회원가입 진행
 	            
 	            session.commit(); // 트랜잭션 커밋,통신 채널 넣음, 넘겨줌
-	    	} catch (Exception e) {
+	    	} catch (Exception e) { // 롤백때문, 통신 끊어지면 지동 커밋된다.
 	    		e.printStackTrace();
 	    		session.rollback(); //DB원상 복구, 하나의 통신 이어줌. 통신이 끊어지면 
+	    		throw new HException("SQL에러", e); // throw 날리기
 			}
 	        return result;
 	    }

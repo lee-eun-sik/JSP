@@ -2,6 +2,7 @@ package service.board;
 
 import java.util.List;
 
+import exception.HException;
 import jakarta.servlet.http.HttpServletRequest;
 import model.board.Board;
 import model.board.Comment;
@@ -11,7 +12,7 @@ public interface BoardService {
     
     public Board getBoardById(String boardId);
     
-    public boolean createBoard(Board board, HttpServletRequest request);
+    public boolean createBoard(Board board, HttpServletRequest request) throws HException;
     
     public boolean updateBoard(Board board, HttpServletRequest request);
     

@@ -4,7 +4,7 @@
 
 <mapper namespace="BoardMapper"> <!-- 매퍼의 네임스페이스 설정 -->
 
-       <select id="getBoardList" parameterType="model.board.Board" resultType="model.board.Board">
+       <select id="getBoardList" parameterType="model.board.Board" resultType="model.board.Board"> <!-- 조외조건 -->
      
          SELECT
             B.RN,
@@ -31,11 +31,12 @@
 		    A.DEL_YN
 		  FROM BOARD A
 		  WHERE A.DEL_YN = 'N'
+		  
 	   )B
 		  WHERE B.RN BETWEEN #{startRow} AND #{endRow}
     </select>
     
-    <select id="getTotalBoardCount" resultType="int">
+    <select id="getTotalBoardCount" resultType="int"> <!--조회조건 -->
         SELECT COUNT(*)
           FROM BOARD
          WHERE DEL_YN ='N'
