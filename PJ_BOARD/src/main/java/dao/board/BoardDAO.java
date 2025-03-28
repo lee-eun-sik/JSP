@@ -11,15 +11,31 @@ import model.board.Comment;
 
 public class BoardDAO {
 	private static final Logger logger = LogManager.getLogger(BoardDAO.class); // Logger 인스턴스 생성
-	
-	public List getBoardList(SqlSession session, Board  board) { //넘겨줄 것과 넘겨받을 것을 정함, 마이바티스가 어떤 쿼리를 돌릴지 정함 실행결과를 넣어줌
-    	// 사용자 정보를 DB에서 검색
-    	List boardList = session.selectList("BoardMapper.getBoardList", board);// 맵퍼에 넘겨줌 매개변수 값 넘겨줌. 쿼리실행함수 돌려줌. 아이디를 가진 쿼리를 찾아서 돌림 필요값 스트링 넘겨준 값을 boardId에 넘겨준다. session 통신을 하기 위함
+	// Modify getBoardList to accept pagination parameters from the service
+	public List<Board> getBoardList(SqlSession session, Board  board) { //넘겨줄 것과 넘겨받을 것을 정함, 마이바티스가 어떤 쿼리를 돌릴지 정함 실행결과를 넣어줌
+		
+		// Get the pagination values from the board object
+		int startRow = board.getStartRow();
+		int endRow = board.getEndRow();
+		
+		// Prepare a map or parameters to pass to the MyBatis query
+		board.setStartRow(startRow);
+		board.setEndRow(endRow);
+		
+		// 사용자 정보를 DB에서 검색
+    	List<Board> boardList = session.selectList("BoardMapper.getBoardList", board);// 맵퍼에 넘겨줌 매개변수 값 넘겨줌. 쿼리실행함수 돌려줌. 아이디를 가진 쿼리를 찾아서 돌림 필요값 스트링 넘겨준 값을 boardId에 넘겨준다. session 통신을 하기 위함
     	return boardList;
     } 
-	public int getTotalBoardCount(SqlSession session) { //넘겨줄 것과 넘겨받을 것을 정함, 마이바티스가 어떤 쿼리를 돌릴지 정함 실행결과를 넣어줌
-    	// 사용자 정보를 DB에서 검색
-    	int totalCount = session.selectOne("BoardMapper.getTotalBoardCount");// 맵퍼에 넘겨줌 매개변수 값 넘겨줌. 쿼리실행함수 돌려줌. 아이디를 가진 쿼리를 찾아서 돌림 필요값 스트링 넘겨준 값을 boardId에 넘겨준다. session 통신을 하기 위함
+	 // Modify getTotalBoardCount to accept filtering parameters from the board object
+	public int getTotalBoardCount(SqlSession session, String searchText, String searchStartDate, String searchEndDate) { //넘겨줄 것과 넘겨받을 것을 정함, 마이바티스가 어떤 쿼리를 돌릴지 정함 실행결과를 넣어줌
+		// Prepare a map or parameters for searching with filters
+        // Pass the parameters for search text and date range if needed
+		// 사용자 정보를 DB에서 검색
+		Board board = new Board();
+		board.setSearchText(searchText);
+		board.setSearchStartDate(searchStartDate);
+		board.setSearchEndDate(searchEndDate);
+    	int totalCount = session.selectOne("BoardMapper.getTotalBoardCount", board);// 맵퍼에 넘겨줌 매개변수 값 넘겨줌. 쿼리실행함수 돌려줌. 아이디를 가진 쿼리를 찾아서 돌림 필요값 스트링 넘겨준 값을 boardId에 넘겨준다. session 통신을 하기 위함
     	return totalCount;
     }
 	

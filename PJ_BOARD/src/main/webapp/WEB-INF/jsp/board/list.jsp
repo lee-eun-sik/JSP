@@ -13,10 +13,10 @@
 <body>
 	<h2>게시판 목록</h2>
 	<form id="searchForm">
-		<input type="text" name="searchText" id="searchText" placeholder="검색">
-		<input type="date" name="searchStartDate" id="searchStartDate">
-		~ <input type="date" name="searchEndDate" id="searchEndDate">
-		<button type="button" id="searchBtn" onclick="">검색</button>
+		<input type="text" name="searchText" id="searchText" value="${param.searchText}"placeholder="검색">
+		<input type="date" name="searchStartDate" id="searchStartDate" value="${param.searchStartDate}">
+		~ <input type="date" name="searchEndDate" id="searchEndDate" value="${param.searchEndDate}">
+		<button type="button" id="searchBtn" onclick="searchBoard()">검색</button>
 	</form>
 	<table>
 		<thead>

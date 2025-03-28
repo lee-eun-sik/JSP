@@ -293,3 +293,15 @@ function setupFileUploadUpdate(options) {
 	       updateRemainingFileIds: updateRemainingFileIds
 	};
 }
+
+function searchBoard() {
+	let searchText = document.getElementById("searchText").value;
+	let searchStartDate = document.getElementById("searchStartDate").value;
+	let searchEndDate = document.getElementById("searchEndDate").value;
+	
+	//검색 결과를 현재 페이지에 반영
+	location.href = "list.do?searchText=" + encodeURIComponent(searchText) +
+					"&searchStartDate=" + encodeURIComponent(searchStartDate) +
+					"&searchEndDate=" + encodeURIComponent(searchEndDate);
+}
+

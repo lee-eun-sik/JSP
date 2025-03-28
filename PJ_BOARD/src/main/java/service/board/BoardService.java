@@ -8,7 +8,7 @@ import model.board.Board;
 import model.board.Comment;
 
 public interface BoardService {
-    public List getBoardList(Board board);
+    public List<Board> getBoardList(Board board);
     
     public Board getBoardById(String boardId);
     

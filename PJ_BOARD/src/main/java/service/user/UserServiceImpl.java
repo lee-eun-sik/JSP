@@ -61,8 +61,7 @@ public class UserServiceImpl implements UserService {// 보안때문, 인터페�
 		SqlSession session = sqlSessionFactory.openSession();
 		boolean result = false;
 		try {
-			User selectUser = 
-			userDAO.getUserById(session, user.getUserId());
+			User selectUser = userDAO.getUserById(session, user.getUserId());
 			// 사용자 정보가 없으면 false 반환
 			if(selectUser == null) {
 				return false; // 사용자 ID가 존재하지 않을 경우
@@ -71,8 +70,7 @@ public class UserServiceImpl implements UserService {// 보안때문, 인터페�
     		String encryptedpPassword = password != null ? SHA256Util.encrypt(password) : null;
 			
     		// 입력된 비밀번호와 DB에 저장된 비밀번호 비교
-			result =  encryptedpPassword
-			.equals(selectUser.getPassword()); // 비밀번호 비교
+			result =  encryptedpPassword.equals(selectUser.getPassword()); // 비밀번호 비교
 			
 			session.commit(); // 트랜잭션 커밋
 		} catch (Exception e) {
@@ -81,11 +79,18 @@ public class UserServiceImpl implements UserService {// 보안때문, 인터페�
 		}
 		return result;
 	}
+	
 	 public User getUserById(String userId) {
 		 SqlSession session = sqlSessionFactory.openSession();
 		 User selectUser = userDAO.getUserById(session, userId); // 사용자 
 		 return selectUser;
 	 }
+
+	@Override
+	public User deleteUser(String userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	 
 
 }

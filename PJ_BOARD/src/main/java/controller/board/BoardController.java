@@ -52,6 +52,7 @@ public class BoardController extends HttpServlet {
 	      String path = request.getRequestURI();
 	      logger.info("BoardController doGet path" + path); 
 	      
+	      
 	      if ("/board/view.do".equals(path)) {
 	    	    String boardId = request.getParameter("id");
 	    	    Board board = boardService.getBoardById(boardId); //받아서 넘김
@@ -65,6 +66,11 @@ public class BoardController extends HttpServlet {
 	    	    request.setAttribute("board", board); //request시켜서 포워딩 시킴
 	            request.getRequestDispatcher("/WEB-INF/jsp/board/update.jsp").forward(request, response);
 	      }else if ("/board/list.do".equals(path)) {
+	    	  // Get search parameters from the request
+	    	  String searchText = request.getParameter("searchText");
+	    	  String searchStartDate = request.getParameter("searchStartDate");
+	    	  String searchEndDate = request.getParameter("searchEndDate");
+	    	  
 	           //페이지 번호 및 개수 설정 (기본값 사용)
 	    	  int page = request.getParameter("page") != null ?
 	    			  Integer.parseInt(request.getParameter("page"))
@@ -76,13 +82,19 @@ public class BoardController extends HttpServlet {
 	    	  Board board = new Board();
 	    	  board.setSize(size);
 	    	  board.setPage(page);
+	    	  board.setSearchText(searchText);
+	    	  board.setSearchStartDate(searchStartDate);
+	    	  board.setSearchEndDate(searchEndDate);
 	    	  
-	    	  List boardList = boardService.getBoardList(board);
+	    	  List<Board> boardList = boardService.getBoardList(board);
 	    	  
 	    	  request.setAttribute("boardList", boardList); //request시켜서 포워딩 시킴
 	    	  request.setAttribute("currentPage", page);
 	    	  request.setAttribute("totalPages", board.getTotalPages());
 	    	  request.setAttribute("size", size);
+	    	  request.setAttribute("searchText", searchText);
+	    	  request.setAttribute("searchStartDate", searchStartDate);
+	    	  request.setAttribute("searchEndDate", searchEndDate);
 	          request.getRequestDispatcher("/WEB-INF/jsp/board/list.jsp").forward(request, response);
 	      } 
 	}

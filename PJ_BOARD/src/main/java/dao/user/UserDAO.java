@@ -34,9 +34,18 @@ public class UserDAO {
      */
     public User getUserById(SqlSession session, String  userId) {
     	// 사용자 정보를 DB에서 검색
-    	User user =
-        session.selectOne("UserMapper.getUserById", userId);
+    	User user = session.selectOne("UserMapper.getUserById", userId);
     	return user;
     }
     
+    public boolean validateUser(SqlSession session, User user) {
+        int result = session.insert("UserMapper.validateUser", user); // 사용자 등록 쿼리 실행
+        return result > 0; // 삽입 성공 여부 반환
+    }
+    
+    public User deleteUser(SqlSession session, String  userId) {
+    	// 사용자 정보를 DB에서 검색
+    	User user = session.selectOne("UserMapper.deleteUser", userId);
+    	return user;
+    }
 }

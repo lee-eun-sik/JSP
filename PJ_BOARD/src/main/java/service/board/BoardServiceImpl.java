@@ -174,13 +174,13 @@ public class BoardServiceImpl implements BoardService {// 보안때문, 인터�
 	}
 
 	@Override
-	public List getBoardList(Board board) {
+	public List<Board> getBoardList(Board board) {
 		// TODO Auto-generated method stub
 		SqlSession session = sqlSessionFactory.openSession();
 		int page = board.getPage();
 		int size = board.getSize();
 		
-		int totalCount = boardDAO.getTotalBoardCount(session);
+		int totalCount = boardDAO.getTotalBoardCount(session, board.getSearchText(), board.getSearchStartDate(), board.getSearchEndDate());
 		int totalPages = (int) Math.ceil((double) totalCount / size);
 		
 		int startRow = (page - 1) * size + 1;
@@ -191,8 +191,8 @@ public class BoardServiceImpl implements BoardService {// 보안때문, 인터�
 		board.setStartRow(startRow);
 		board.setEndRow(endRow);
 		
-		List list = boardDAO.getBoardList(session, board);
-		return list;
+		List<Board> boardList = boardDAO.getBoardList(session, board);
+		return boardList;
 	}
 
 	@Override
