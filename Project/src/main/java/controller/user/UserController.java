@@ -20,7 +20,11 @@ import service.user.UserServiceImpl;
 @WebServlet("/user/*")
 public class UserController extends HttpServlet {
 
-	private static final long serialVersionUID = 7949105235983859619L;
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4856921015036695792L;
 	private static final Logger logger = LogManager.getLogger(UserController.class); 
 	private UserService userService;
 	

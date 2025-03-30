@@ -5,7 +5,7 @@
 <head>
 <meta charset="UTF-8">
 <title>로그인 화면</title>
-<script src="https;//code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 <body>
 			<form method="get"  id="loginForm">
@@ -26,7 +26,7 @@
 								type: 'POST',
 								data: $(this).serialize(), // 폼 데이터 직렬화
 								dataType: 'json',
-								success: function(resposse) {
+								success: function(response) {
 									console.log(response);
 									// 응답 처리
 									if (response.success) {

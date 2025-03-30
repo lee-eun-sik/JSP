@@ -81,7 +81,7 @@
 <body>
 				<h2>회원가입</h2>
 				<form id="joinForm">
-					<lable for="userId">아이디:</lable>
+					<label for="userId">아이디:</label>
 					<input type="text" id="userId" name="userId"maxlength="20" placeholder="아이디 입력" required/>
 					<br/>
 					<label for="username">이름:</label>
