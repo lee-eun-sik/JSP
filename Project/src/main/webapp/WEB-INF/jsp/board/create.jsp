@@ -9,7 +9,7 @@
 <meta charset="UTF-8">
 <title>회원가입</title>
 <script src="/js/jquery-3.7.1.min.js"></script>
-<script src="/js/tinymce/tinmymce.min.js"></script>
+<script src="/js/tinymce/tinymce.min.js"></script>
 <script src="/js/edit.js?ver=1"></script>
 <script src="/js/common.js?var=1.1"></script>
 <script type="text/javascript">
@@ -17,8 +17,8 @@
 				let edit = editInit("content");
 				
 				let uploadedFiles = setupFileUpload({
-					dropZone: '#dropZone",
-					fileInput: '$files',
+					dropZone: '#dropZone',
+					fileInput: '#files',
 					fileList: '#fileList',
 					maxFileSize: 50 * 1024 * 1024 // 50MB 제한
 				});
@@ -55,10 +55,10 @@
 						return;
 					}
 					
-					let formData = new FormDate();
+					let formData = new FormData();
 										formData.append("title", title);
 										formData.append("content", tinymce.get('content').getContent());
-										formData.append("createId", $("createId").val().trim());
+										formData.append("createId", $("#createId").val().trim());
 										formData.append("viewCount", 0);
 			
 				// $("#content").val(tinymce.get('content').getContent());
@@ -75,7 +75,7 @@
 													alert("게시글 생성 성공! 게시판 목록으로 이동합니다.");
 													//window.location.href="/board/list.do";
 												} else {
-															alert("게시글 생성 실패" + response.message)};
+															alert("게시글 생성 실패" + response.message);
 												}
 									}
 								);
