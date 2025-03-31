@@ -24,18 +24,26 @@
     <!-- 사용자 생성 -->
     <insert id="registerUser" parameterType="model.user.User">
         INSERT INTO USERS (
-        USER_ID, 
-        USERNAME, 
-        PASSWORD, 
-        EMAIL, 
-        CREATE_ID
-        )VALUES (
-        #{userId}, 
-        #{username}, 
-        #{password}, 
-        #{email}, 
-        #{createId}
-        )
+		    USER_ID, 
+		    USERNAME, 
+		    PASSWORD,
+		    EMAIL,
+		    CREATE_ID,
+		    PHONENUMBER,
+		    PASSWORD_CONFIRM,
+		    GENDER,
+		    BIRTH_DATE
+		) VALUES (
+		    #{userId}, 
+		    #{username}, 
+		    #{password},
+		    #{email},
+		    #{createId},
+		    #{phonenumber},
+		    #{password_confirm}, 
+		    #{gender},
+		    #{birthdate, jdbcType=DATE}  
+		)
     </insert>
 
     <!-- 사용자 업데이트 -->

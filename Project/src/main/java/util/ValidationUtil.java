@@ -41,4 +41,8 @@ public class ValidationUtil {
         String phonePattern = "^(\\d{2,3})-(\\d{3,4})-(\\d{4})$";
         return (value != null && Pattern.matches(phonePattern, value)) ? ResponseCode.SUCCESS : ResponseCode.INVALID_PHONE;
     }
+    // 비밀번호와 비밀번호 확인 비교
+    public static ResponseCode validatePasswordMatch(String password, String confirmPassword) {
+        return (password != null && password.equals(confirmPassword)) ? ResponseCode.SUCCESS : ResponseCode.PASSWORD_MISMATCH;
+    }
 }

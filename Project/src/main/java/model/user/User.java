@@ -1,5 +1,7 @@
 package model.user;
 
+import java.util.Date;
+
 import model.Model;
 
 public class User extends Model {
@@ -7,13 +9,50 @@ public class User extends Model {
 	private String username; //사용자 이름
 	private String password; //비밀번호 (암호화 저장됨)
 	private String email;	//이메일
-
+	private String password_confirm; //비밀번호 확인
+	private String gender; //성별
+	private String phonenumber; //전화번호
+	private Date birthdate;
 	//기본 생성자
 	
 	public User() {
 		
 	}
 	
+	public String getPassword_confirm() {
+		return password_confirm;
+	}
+
+	public void setPassword_confirm(String password_confirm) {
+		this.password_confirm = password_confirm;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	
+
+	public String getPhonenumber() {
+		return phonenumber;
+	}
+
+	public void setPhonenumber(String phonenumber) {
+		this.phonenumber = phonenumber;
+	}
+
+	public Date getBirthdate() {
+		return birthdate;
+	}
+
+	public void setBirthdate(Date birthdate) {
+		this.birthdate = birthdate;
+	}
+
 	//모든 필드를 포함하는 생성자
 	public String getUserId() {
 		return userId;

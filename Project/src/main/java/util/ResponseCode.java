@@ -8,6 +8,7 @@ public enum ResponseCode {
     INVALID_EMAIL(403, "{field} 올바른 이메일 형식을 입력해주세요."),
     WEAK_PASSWORD(404, "{field} 비밀번호는 최소 8자, 영문, 숫자, 특수문자를 포함해야 합니다."),
     INVALID_PHONE(405, "{field} 올바른 전화번호 형식을 입력해주세요."),
+    PASSWORD_MISMATCH(407, "비밀번호가 일치하지 않습니다."),
     SERVER_ERROR(500, "서버 내부 오류가 발생했습니다.");
 
     private final int code;

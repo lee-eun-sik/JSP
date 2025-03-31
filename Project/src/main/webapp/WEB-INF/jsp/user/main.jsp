@@ -9,7 +9,7 @@
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 <body>
-				<c:choose>
+				<c:choose style="">
 							<c:when test="${empty sessionScope.user}">
 											<c:redirect url="/user/login.do" />
 							</c:when>

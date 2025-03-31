@@ -173,7 +173,7 @@ public class BoardServiceImpl implements BoardService {// 보안때문, 인터�
         return result;
 	}
 
-	@Override
+	@Override //검색 조회!!!!!!!!!!!!!!
 	public List<Board> getBoardList(Board board) {
 		// TODO Auto-generated method stub
 		SqlSession session = sqlSessionFactory.openSession();

@@ -9,11 +9,16 @@
 </head>
 <body>
 			<form method="get"  id="loginForm">
-						id : <input type="text" name="id"><br/>
-						비밀번호 : <input type="password" name="pass">
+						<h2>상표</h2>
+						<h4>로그인</h4>
+						<input type="text" name="id" placeholder="아이디"><br/>
+						<input type="password" name="pass" placeholder="비밀번호">
+						<div>
+							<a href="FindID.jsp">아이디찾기</a>
+							<a href="FIndPW.jsp">비밀번호찾기</a>
+						</div>
 						<button type="submit">로그인</button>
 			</form>
-			<a href="/user/join.do">회원가입 페이지로 이동</a>
 			
 			<script type="text/javascript">
 				$(document).ready(function() {

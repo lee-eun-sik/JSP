@@ -2,6 +2,8 @@ package controller.user;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -69,10 +71,23 @@ public class UserController extends HttpServlet {
                 User user = new User();
                 user.setUserId(request.getParameter("userId"));
                 user.setUsername(request.getParameter("username"));
-                user.setPassword(request.getParameter("password")); 
+                user.setPassword(request.getParameter("password"));
+                user.setPassword_confirm(request.getParameter("password_confirm"));
+                user.setGender(request.getParameter("gender").substring(0, 1));
+                user.setPhonenumber(request.getParameter("phonenumber"));
+                //날짜 변환 추가
+                String birthdateStr = request.getParameter("birthdate");
+                SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+                Date birthdate = sdf.parse(birthdateStr);
+                user.setBirthdate(birthdate);
                 user.setEmail(request.getParameter("email"));
                 user.setCreateId("SYSTEM");
                 
+                if(!user.getPassword().equals(user.getPassword_confirm())) {
+                	jsonResponse.put("error", "비밀번호가 일치하지 않습니다.");
+                	response.getWriter().write(jsonResponse.toString());
+                	return;
+                }
                 jsonResponse.put("success", userService.registerUser(user));
             } else if ("/user/loginCheck.do".equals(path)) { 
             	

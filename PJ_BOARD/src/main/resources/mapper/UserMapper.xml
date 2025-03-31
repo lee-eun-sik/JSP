@@ -23,8 +23,19 @@
 
     <!-- 사용자 생성 -->
     <insert id="registerUser" parameterType="model.user.User">
-        INSERT INTO USERS (USER_ID, USERNAME, PASSWORD, EMAIL, CREATE_ID)
-        VALUES (#{userId}, #{username}, #{password}, #{email}, #{createId})
+        INSERT INTO USERS (
+	        USER_ID, 
+	        USERNAME, 
+	        PASSWORD, 
+	        EMAIL, 
+	        CREATE_ID
+        ) VALUES (
+	        #{userId}, 
+	        #{username}, 
+	        #{password}, 
+	        #{email}, 
+	        #{createId}
+        )
     </insert>
 
     <!-- 사용자 업데이트 -->
