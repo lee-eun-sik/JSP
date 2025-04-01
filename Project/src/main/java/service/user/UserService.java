@@ -10,7 +10,11 @@ public interface UserService {
     
     boolean validateUser(User user);
     
-    public User getUserById(String userId);
-    
-    public User deleteUser(String userId);
+    User getUserById(String userId);
+    //회원정보 수정
+   
+    //회원정보 탈퇴
+    boolean deleteUser(String userId);
+
+	boolean updateUser(User user);
 }

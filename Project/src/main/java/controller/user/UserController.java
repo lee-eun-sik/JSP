@@ -85,10 +85,12 @@ public class UserController extends HttpServlet {
                 
                 if(!user.getPassword().equals(user.getPassword_confirm())) {
                 	jsonResponse.put("error", "비밀번호가 일치하지 않습니다.");
-                	response.getWriter().write(jsonResponse.toString());
+                	out.print(jsonResponse.toString());
+                	out.flush();
                 	return;
                 }
                 jsonResponse.put("success", userService.registerUser(user));
+                
             } else if ("/user/loginCheck.do".equals(path)) { 
             	
         		User user = new User();
@@ -126,6 +128,40 @@ public class UserController extends HttpServlet {
 				}
 				
             }
+         // 회원정보 수정 처리 (추가된 코드)
+			else if ("/user/update.do".equals(path)) {
+				HttpSession session = request.getSession();
+				User sessionUser = (User) session.getAttribute("user");
+				
+				if (sessionUser == null) {
+					jsonResponse.put("success", false);
+					jsonResponse.put("message", "로그인이 필요합니다.");
+				} else {
+					// 클라이언트에서 받은 데이터로 User 객체 생성
+					User user = new User();
+					user.setUserId(sessionUser.getUserId()); // 세션에서 가져오기
+					user.setUsername(request.getParameter("username"));
+					user.setEmail(request.getParameter("email"));
+					
+					// 비밀번호가 입력된 경우에만 업데이트
+					String password = request.getParameter("password");
+					if (password != null && !password.isEmpty()) {
+						user.setPassword(password);
+					}
+					
+					// 서비스 호출하여 업데이트 수행
+					boolean updateSuccess = userService.updateUser(user);
+					
+					if (updateSuccess) {
+						// 세션 정보 업데이트
+						session.setAttribute("user", userService.getUserById(user.getUserId()));
+						jsonResponse.put("success", true);
+					} else {
+						jsonResponse.put("success", false);
+						jsonResponse.put("message", "회원정보 수정에 실패했습니다.");
+					}
+				}
+			}
         } catch (Exception e) {
             jsonResponse.put("success", false); // 오류 발생 시
             jsonResponse.put("message", "서버 오류 발생"); // 오류 메시지

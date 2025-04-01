@@ -22,8 +22,15 @@ public class UserDAO {
      * @return 성공 여부
      */
     public boolean registerUser(SqlSession session, User user) {
-        int result = session.insert("UserMapper.registerUser", user); // 사용자 등록 쿼리 실행
-        return result > 0; // 삽입 성공 여부 반환
+        try {
+        	int result = session.insert("UserMapper.registerUser", user);
+        	session.commit(); // 트랜잭션 커밋
+        	return result >0;
+        } catch (Exception e) {
+        	session.rollback(); // 오류 발생 시 롤백
+        	logger.error("Error in registerUser: ", e);
+        	return false;
+        }
     }
     /**
      * 사용자 로그인 검증
@@ -34,18 +41,40 @@ public class UserDAO {
      */
     public User getUserById(SqlSession session, String  userId) {
     	// 사용자 정보를 DB에서 검색
-    	User user = session.selectOne("UserMapper.getUserById", userId);
-    	return user;
+    	return session.selectOne("UserMapper.getUserById", userId);
     }
     
     public boolean validateUser(SqlSession session, User user) {
-        int result = session.insert("UserMapper.validateUser", user); // 사용자 등록 쿼리 실행
-        return result > 0; // 삽입 성공 여부 반환
+        User storedUser = getUserById(session, user.getUserId());
+        
+        if (storedUser != null && storedUser.getPassword().equals(user.getPassword())) {
+        	return true;
+        }
+        return false;
     }
     
-    public User deleteUser(SqlSession session, String  userId) {
+    public boolean deleteUser(SqlSession session, String  userId) {
     	// 사용자 정보를 DB에서 검색
-    	User user = session.selectOne("UserMapper.deleteUser", userId);
-    	return user;
+    	try {
+    		int result = session.delete("UserMapper.deleteUser", userId);
+    		session.commit();
+    		return result >0;
+    	} catch (Exception e) {
+    		session.rollback();// 오류 발생 시 롤백
+    		logger.error("Error in deleteUser: ", 0);
+    		return false;
+    	}
+    }
+    
+    public boolean updateUser(SqlSession session, User user) {
+    	try {
+    		int updateRows = session.update("UserMapper.updateUser", user);
+    		session.commit(); // 트랜잭션 커밋
+    		return updateRows > 0;
+    	} catch (Exception e) {
+    		session.rollback(); // 오류 발생 시 롤백
+            logger.error("Error in updateUser: ", e);
+            return false;
+    	}
     }
 }
