@@ -28,7 +28,7 @@
 				$("#deleteBtn").click(function(event){
 								ajaxRequest(
 														"/board/delete.do",
-														{boardId:${"#boardId"}.val(),
+														{boardId:$("#boardId").val(),
 														updateId:$("#updateId").val()
 								},
 								function(response) {
@@ -42,7 +42,7 @@
 						);
 				});
 				
-				$("updateBtn").click(function (event) {
+				$("#updateBtn").click(function (event) {
 					event.preventDefault();	// 기본 제출 방지
 					
 					let title = $("#title").val().trim();

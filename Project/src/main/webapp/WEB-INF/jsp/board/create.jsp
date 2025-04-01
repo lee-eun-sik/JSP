@@ -86,12 +86,12 @@
 <body>
 				<h2>게시글 작성</h2>
 				<form id="boardCreateForm">
-								<label for="title">제목:</label>
-								<input type="text" id="title" name="title" maxlength="100" placeholder="제목 입력" required/>
-								<br />
-								<label for="content">내용:</label>
-								<textarea rows="5" cols="40" id="content" name="content"></textarea>
-								<br/>
+				<label for="title">제목:</label>
+				<input type="text" id="title" name="title" maxlength="100" placeholder="제목 입력" required/>
+				<br />
+				<label for="content">내용:</label>
+				<textarea rows="5" cols="40" id="content" name="content"></textarea>
+				<br/>
 								
 								<!--  드레그 앤 드롭 파일 업로드 영역 -->
 				<div id="dropZone">여기로 파일을 드래그하거나 클릭하여 선택하세요.</div>

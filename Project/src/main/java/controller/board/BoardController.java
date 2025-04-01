@@ -87,7 +87,6 @@ public class BoardController extends HttpServlet {
 	    	  board.setSearchEndDate(searchEndDate);
 	    	  
 	    	  List<Board> boardList = boardService.getBoardList(board);
-	    	  
 	    	  request.setAttribute("boardList", boardList); //request시켜서 포워딩 시킴
 	    	  request.setAttribute("currentPage", page);
 	    	  request.setAttribute("totalPages", board.getTotalPages());
@@ -116,7 +115,7 @@ public class BoardController extends HttpServlet {
             	String content = request.getParameter("content");
             	String viewCount = request.getParameter("viewCount");
             	String createId = request.getParameter("createId");
-            
+       
             	// User 객체 생성 및 등록
             	Board board = new Board();
             	board.setTitle(title);
@@ -135,7 +134,8 @@ public class BoardController extends HttpServlet {
             	String content = request.getParameter("content");
             	String viewCount = request.getParameter("viewCount");
             	String updateId = request.getParameter("updateId");
-            
+            	
+            	
             	// User 객체 생성 및 등록
             	Board board = new Board();
             	board.setBoardId(boardId);
@@ -149,12 +149,13 @@ public class BoardController extends HttpServlet {
             	jsonResponse.put("success", isUpdate);
             	jsonResponse.put("message", isUpdate ? "게시글이 성공적으로 수정되었습니다." : "게시글이 수정실패");
             }else if ("/board/delete.do".equals(path)) { 
-            	String beardId = request.getParameter("beardId");
+            	String boardId = request.getParameter("boardId");
             	String updateId = request.getParameter("updateId");
-            
+            	
+            	
             	// User 객체 생성 및 등록
             	Board board = new Board();
-            	board.setBoardId(beardId);
+            	board.setBoardId(boardId);
             	board.setUpdateId(updateId);
             	
             	// 사용자 수정 처리

@@ -37,11 +37,11 @@
 		  </if>
 		  
 		  <if test="searchStartDate != null and searchStartDate != ''">
-		  		AND A.CREATE_DT >= TO_DATE(#{searchStartDate}, 'YYYY-MM-DD')
+		  		AND A.CREATE_DT >= TO_DATE(#{searchStartDate}, 'YYYY-MM-DD') 
 		  </if>
 		  
 		  <if test="searchEndDate != null and searchEndDate != ''">
-		  		AND A.CREATE_DT<![CDATA[<=]]> TO_DATE(#{searchEndDate}, 'YYYY-MM-DD')
+		  		AND A.CREATE_DT<![CDATA[<=]]> TO_DATE(#{searchEndDate}, 'YYYY-MM-DD') 
 		  </if>		
 	  ) B
 		  WHERE B.RN BETWEEN #{startRow} AND #{endRow}
@@ -127,8 +127,20 @@
 
    <!-- 댓글 등록 -->
     <insert id="insertComment" parameterType="model.board.Comment">
-        INSERT INTO POST_COMMENT (COMMENT_ID, BOARD_ID, PARENT_COMMENT_ID, CONTENT, CREATE_ID)
-        VALUES (SEQ_COMMENT.NEXTVAL, #{boardId}, #{parentCommentId}, #{content}, #{createId})
+        INSERT INTO POST_COMMENT 
+        	(
+        	COMMENT_ID, 
+        	BOARD_ID, 
+        	PARENT_COMMENT_ID, 
+        	CONTENT, 
+        	CREATE_ID
+        	) VALUES (
+        	SEQ_COMMENT.NEXTVAL, 
+        	#{boardId}, 
+        	#{parentCommentId}, 
+        	#{content}, 
+        	#{createId}
+        	)
     </insert>
 
     <!-- 게시글에 대한 댓글 조회 (대댓글 포함) -->

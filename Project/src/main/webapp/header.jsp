@@ -33,47 +33,48 @@
     
     
     img {
-        width: 160px;
-        height: 160px;
+        width: 110px;
+        height: 110px;
     }
-   .signInfo button{
+    .signInfo button{
     	background-color: #5A7262;
     	color: white;
     	padding: 10px 15px;
+    	border: 2px solid white; /* 테두리 흰색으로 변경 */
     	border-radius: 5px; /* 모서리를 둥글게 */
     }
     
     .backgroundimg img {
-	    width: 1300px;
+	    width: 1270px;
 	    height: 700px;
 	    position: relative; /* 내부 요소의 위치 조정을 위해 relative 설정 */
 	    display: flex;
 	    justify-content: center; /* 이미지를 중앙 정렬 */
 	}
 
-.text-overlay {
-	font-family: 'Nanum Gothic', sans-serif; /* 나눔고딕 적용 */
-    position: absolute; /* 절대 위치 지정 */
-    bottom: -20%; /* PET MATE 아래 위치 조정 */
-    left: 20%; /* 중앙 정렬 */
-    transform: translateX(-50%); /* 정확한 가운데 정렬 */
-    text-align: center; /* 텍스트 중앙 정렬 */
-    font-size: 24px;
-    font-weight: bold;
-    color: white; /* 가독성을 위해 검은색 사용 */
-    width: 80%; /* 텍스트 너비 조정 */
-}
-.text-overlay #p {
-	font-size: 32px;
-	text-shadow: 3px 3px 7px rgba(0, 0, 0, 0.7);
-	
-}
-.text-overlay #p1 {
-	font-size: 22px;
-    margin-top: 10px;
-    text-shadow: 2px 2px 7px rgba(0, 0, 0, 0.7);
-    
-}
+	.text-overlay {
+		font-family: 'Nanum Gothic', sans-serif; /* 나눔고딕 적용 */
+	    position: absolute; /* 절대 위치 지정 */
+	    bottom: 18%; /* PET MATE 아래 위치 조정 */
+	    left: 21%; /* 중앙 정렬 */
+	    transform: translateX(-50%); /* 정확한 가운데 정렬 */
+	    text-align: center; /* 텍스트 중앙 정렬 */
+	    font-size: 24px;
+	    font-weight: bold;
+	    color: white; /* 가독성을 위해 검은색 사용 */
+	    width: 80%; /* 텍스트 너비 조정 */
+	}
+	.text-overlay #p {
+		font-size: 32px;
+		text-shadow: 3px 3px 7px rgba(0, 0, 0, 0.7);
+		
+	}
+	.text-overlay #p1 {
+		font-size: 22px;
+	    margin-top: 10px;
+	    text-shadow: 2px 2px 7px rgba(0, 0, 0, 0.7);
+	    
+	}
 </style>
 </head>
 <body>
@@ -84,7 +85,7 @@
 <img src="logo.png">
 	<div class="menu">
 		<a href="noticeBoard.jsp">공지사항</a>
-		<a href="persitter.jsp">펫시터</a>
+		<a href="petsitter.jsp">펫시터</a>
 		<a href="reservationList.jsp">예약목록</a>
 		<a href="reviewList.jsp">리뷰목록</a>
 		<a href="community.jsp">커뮤니티</a>

@@ -115,7 +115,7 @@
 		<input type="text" id="title" name="title" value="${board.title}" maxlength="100" placeholder="제목 입력" required /> <br />
 		<br>
 		<label for="content">내용:</label> 
-		<textarea rows="5" cols="40" id="content" name="content" >${board.content}</textarea>
+		<textarea rows="5" cols="40" id="content" name="content">${board.content}</textarea>
 		<br/>
 		<input type="hidden" id="remainingFileIds" name="remainingFileIds" value="">
         <input type="hidden" id="updateId" name="updateId" value="${sessionScope.user.userId}"/>

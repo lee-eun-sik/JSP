@@ -27,6 +27,7 @@ public class Board extends Model{
 	private String searchText; //Search text for title/content
 	private String searchStartDate; // Start date for filtering
 	private String searchEndDate; // End date for filtering
+	
 	public String getBoardId() {
 		return boardId;
 	}
