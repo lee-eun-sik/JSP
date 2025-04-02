@@ -127,41 +127,46 @@ public class UserController extends HttpServlet {
 					jsonResponse.put("success", false); // 실패 
 				}
 				
+            } else if ("/user/update.do".equals(path)) {
+            	HttpSession session = request.getSession();
+            	User sessionUser = (User) session.getAttribute("user");
+            	
+            	if (sessionUser == null) {
+            		jsonResponse.put("success", false);
+            		jsonResponse.put("message", "로그인이 필요합니다.");
+            	} else {
+            		User updateUser = new User();
+            		updateUser.setUserId(sessionUser.getUserId());
+            		updateUser.setPhonenumber(request.getParameter("phone"));
+            		updateUser.setEmail(request.getParameter("email"));
+            		
+            		try {
+            		    String birthdateStr = request.getParameter("birthdate");
+            		    SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+            		    java.util.Date parsedDate = sdf.parse(birthdateStr); // 문자열을 java.util.Date로 변환
+            		    java.sql.Date birthdate = new java.sql.Date(parsedDate.getTime()); // java.sql.Date로 변환
+            		    updateUser.setBirthdate(birthdate);
+            		} catch (Exception e) {
+            		    jsonResponse.put("success", false);
+            		    jsonResponse.put("message", "생년월일 형식이 올바르지 않습니다.");
+            		    out.print(jsonResponse.toString());
+            		    out.flush();
+            		    return;
+            		}
+            		
+            		boolean updateResult = userService.updateUser(updateUser);
+            		
+            		if (updateResult) {
+            			session.setAttribute("user", updateUser);
+            			jsonResponse.put("success", true);
+            			jsonResponse.put("message", "회원 정보가 성공적으로 수정되었습니다.");
+            		} else {
+            			jsonResponse.put("success", false);
+            			jsonResponse.put("message", "회원 정보 수정에 실패했습니다.");
+            		}
+            	}
             }
-         // 회원정보 수정 처리 (추가된 코드)
-			else if ("/user/update.do".equals(path)) {
-				HttpSession session = request.getSession();
-				User sessionUser = (User) session.getAttribute("user");
-				
-				if (sessionUser == null) {
-					jsonResponse.put("success", false);
-					jsonResponse.put("message", "로그인이 필요합니다.");
-				} else {
-					// 클라이언트에서 받은 데이터로 User 객체 생성
-					User user = new User();
-					user.setUserId(sessionUser.getUserId()); // 세션에서 가져오기
-					user.setUsername(request.getParameter("username"));
-					user.setEmail(request.getParameter("email"));
-					
-					// 비밀번호가 입력된 경우에만 업데이트
-					String password = request.getParameter("password");
-					if (password != null && !password.isEmpty()) {
-						user.setPassword(password);
-					}
-					
-					// 서비스 호출하여 업데이트 수행
-					boolean updateSuccess = userService.updateUser(user);
-					
-					if (updateSuccess) {
-						// 세션 정보 업데이트
-						session.setAttribute("user", userService.getUserById(user.getUserId()));
-						jsonResponse.put("success", true);
-					} else {
-						jsonResponse.put("success", false);
-						jsonResponse.put("message", "회원정보 수정에 실패했습니다.");
-					}
-				}
-			}
+         
         } catch (Exception e) {
             jsonResponse.put("success", false); // 오류 발생 시
             jsonResponse.put("message", "서버 오류 발생"); // 오류 메시지

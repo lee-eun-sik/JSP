@@ -127,7 +127,7 @@
 				</form>
 <script type="text/javascript">
 $(document).ready(function() {
-    $("#birth_date").datepicker({
+    $("#birthdate").datepicker({
         dateFormat: "mm/dd/yy", // MM/DD/YYYY 형식 설정
         changeMonth: true,
         changeYear: true,

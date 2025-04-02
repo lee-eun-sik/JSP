@@ -30,7 +30,6 @@
 		    EMAIL,
 		    CREATE_ID,
 		    PHONENUMBER,
-		    PASSWORD_CONFIRM,
 		    GENDER,
 		    BIRTH_DATE
 		) VALUES (
@@ -39,26 +38,19 @@
 		    #{password},
 		    #{email},
 		    #{createId},
-		    #{phonenumber},
-		    #{password_confirm}, 
+		    #{phonenumber}, 
 		    #{gender},
 		    #{birthdate, jdbcType=DATE}  
 		)
     </insert>
 
     <!-- 사용자 업데이트 -->
-    <update id="updateUser" parameterType="model.user.User">
-	    UPDATE USERS
-	    <set>
-	        USERNAME = #{username},
-	        EMAIL = #{email},
-	        UPDATE_ID = #{updateId},
-	        UPDATE_DT = SYSDATE
-		    <if test="password != null and password != ''">
-		        , PASSWORD = #{password} <!-- 비밀번호가 제공된 경우만 업데이트 -->
-		    </if>
-		</set>    
-	    WHERE USER_ID = #{userId}
+    <update id="updateUser">
+	    UPDATE users 
+	    SET phonenumber = #{phonenumber}, 
+	    	email = #{email}, 
+	    	birth_date = #{birthdate}
+	    WHERE "USER_ID" = #{userId}
 	</update>
 
     <!-- 사용자 삭제 
@@ -71,9 +63,9 @@
     <!-- 사용자 삭제 (논리 삭제) -->
     <update id="deleteUser" parameterType="model.user.User">
         UPDATE USERS 
-        SET DEL_YN = 'Y',  <!-- 삭제된 사용자 표시 -->
-            UPDATE_ID = #{updateId},  <!-- 삭제를 수행한 관리자 ID -->
-            UPDATE_DT = SYSDATE  <!-- 삭제 시간 기록 -->
+        SET DEL_YN = 'Y',  
+            UPDATE_ID = #{updateId},  
+            UPDATE_DT = SYSDATE  
         WHERE USER_ID = #{userId}
     </update>
 

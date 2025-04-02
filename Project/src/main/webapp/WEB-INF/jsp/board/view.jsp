@@ -57,14 +57,22 @@
 	<script>
 	// 답글 작성
 	function addComment(parentId) {
-		let content = parentId && parentId != 0 ?
-				$('#replyContent_' + parentId).val().trim()
-				: $('#commentContent').val().trim();
-		if (!content) {
-			alert("댓글 내용을 입력해 주세요.");
+		let contentElement = parentId && parentId != 0 ?
+				$('#replyContent_' + parentId)
+				: $('#commentContent');
+		if (!contentElement.length) {
+			console.error("해당 ID를 가진 댓글 입력창이 없습니다:", "replyContent_" + parentId);
+	        alert("댓글 입력창이 보이지 않습니다. 페이지를 새로고침 해보세요.");
 			return;
 		}
+
+		let content = contentElement.val() ? contentElement.val().trim() : '';
 		
+		if (!content) {
+	        alert("댓글 내용을 입력해 주세요.");
+	        return;
+	    }
+
 		if (content.length > 500) {
 			alert("댓글은 500자 이하로 작성해 주세요.");
 			return;
@@ -169,7 +177,7 @@
 		var replyForm = $('#replyForm_' + commentId);
 		
 		if(replyForm.is(":visible")) {
-			replyform.hide();
+			replyForm.hide();
 		} else {
 			replyForm.show();
 		}

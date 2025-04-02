@@ -11,7 +11,7 @@ import util.MybatisUtil;
 
 public class UserDAO {
     private static final Logger logger = LogManager.getLogger(UserDAO.class); // Logger 인스턴스 생성
-   
+    private SqlSessionFactory sqlSessionFactory = MybatisUtil.getSqlSessionFactory(); // Mybatis 세션 팩토리 추가
 
     /**
      * 사용자 회원가입
@@ -66,15 +66,14 @@ public class UserDAO {
     	}
     }
     
-    public boolean updateUser(SqlSession session, User user) {
-    	try {
+    public boolean updateUser(User user) {
+    	try (SqlSession session = sqlSessionFactory.openSession()) { // 세션 열기
     		int updateRows = session.update("UserMapper.updateUser", user);
     		session.commit(); // 트랜잭션 커밋
     		return updateRows > 0;
     	} catch (Exception e) {
-    		session.rollback(); // 오류 발생 시 롤백
-            logger.error("Error in updateUser: ", e);
-            return false;
+    		logger.error("Error in updateUser: ", e);
+    		return false;		
     	}
     }
 }

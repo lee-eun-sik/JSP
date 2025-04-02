@@ -169,7 +169,7 @@
 		var replyForm = $('#replyForm_' + commentId);
 		
 		if(replyForm.is(":visible")) {
-			replyform.hide();
+			replyForm.hide();
 		} else {
 			replyForm.show();
 		}
