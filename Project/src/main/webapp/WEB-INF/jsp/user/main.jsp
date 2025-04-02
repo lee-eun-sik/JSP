@@ -80,7 +80,7 @@
 									    <h1 id="mypage">마이페이지</h1>
 									
 									    <form method="post" id="logoutForm">
-									        <p><strong>${sessionScope.user.username}</strong>님 안녕하세요.</p>
+									        <p><strong>${sessionScope.user.userId}</strong>님 안녕하세요.</p>
 									        
 									        <table id="logoutTable">
 									            <tr>
@@ -163,7 +163,31 @@
 												});
 											});
 										</script>
-										
+										<script type="text/javascript"> 
+										$(document).ready(function() {
+											$(".button-group button:contains('회원탈퇴')").click(function () {
+												if (!confirm("정말로 탈퇴하시겠습니까?")) {
+													return;
+												}
+												
+												$.ajax({
+													url: "/user/delete.do",
+													type: "POST",
+													data: { userId: $("input[name='id']").val() },
+													dataType: "json",
+													success: function(response) {
+														alert(response.message);
+														if (response.success) {
+															window.location.href = "/user/login.do"; // 탈퇴 후 로그인 페이지로 이동
+														}
+													},
+													error: function() {
+														alert("통신 오류가 발생했습니다.");
+													}
+												});
+											});
+										});
+										</script>
 										<script type="text/javascript">
 										$(document).ready(function() {
 										    $("#birthdate").datepicker({

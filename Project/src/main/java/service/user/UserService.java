@@ -1,5 +1,6 @@
 package service.user;
 
+import exception.HException;
 import model.user.User;
 
 public interface UserService {
@@ -10,9 +11,10 @@ public interface UserService {
     
     /**
      * 사용자 로그인 검증
+     * @throws HException 
      */
     
-    boolean validateUser(User user);
+    boolean validateUser(User user) throws HException;
     
     /**
      * 사용자 정보 가져오기
@@ -24,5 +26,7 @@ public interface UserService {
     /**
      * 회원 정보 수정
      */
-    boolean updateUser(User user);  // 추가
+    boolean updateUser(User user);  // 수정
+    
+    boolean deleteUser(String userId); //삭제
 }

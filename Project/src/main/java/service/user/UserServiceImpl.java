@@ -1,14 +1,12 @@
 package service.user;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import dao.user.UserDAO;
+import exception.HException;
 import model.user.User;
 import util.MybatisUtil;
 import util.SHA256Util;
@@ -41,53 +39,39 @@ public class UserServiceImpl implements UserService {// 보안때문, 인터페�
      */
     @Override
     public boolean registerUser(User user) {
-    	SqlSession session = sqlSessionFactory.openSession();
-    	boolean result = false; 
-    	
-    	try {// 암호화 시키기
+    	try (SqlSession session = sqlSessionFactory.openSession()){// 암호화 시키기
     		String password = user.getPassword();
     		String encryptedpPassword = password != null ? SHA256Util.encrypt(password) : null;
     		user.setPassword(encryptedpPassword);
     		
     		// DAO를 통해 회원가입 진행
-            result = userDAO.registerUser(session, user);
-            session.commit(); // 트랜잭션 커밋,통신 채널 넣음, 넘겨줌
+            boolean result = userDAO.registerUser(session, user);
+            if (result) session.commit(); // 트랜잭션 커밋,통신 채널 넣음, 넘겨줌
+            return result;
     	} catch (Exception e) {
-    		e.printStackTrace();
-    		session.rollback(); //DB원상 복구, 하나의 통신 이어줌. 통신이 끊어지면 
+    		logger.error("Error in registerUser: ", e);
+    		return false; //DB원상 복구, 하나의 통신 이어줌. 통신이 끊어지면 
 		}
-        return result;
     }
 
 	@Override
-	public boolean validateUser(User user) {
+	public boolean validateUser(User user) throws HException {
 		// TODO Auto-generated method stub
-		SqlSession session = sqlSessionFactory.openSession();
-		boolean result = false;
-		try {
+		try (SqlSession session = sqlSessionFactory.openSession()) {
 			User selectUser = userDAO.getUserById(session, user.getUserId());
-			// 사용자 정보가 없으면 false 반환
-			if(selectUser == null) {
-				return false; // 사용자 ID가 존재하지 않을 경우
-			}
+			if (selectUser == null) return false;
+			
 			String password = user.getPassword();
-    		String encryptedpPassword = password != null ? SHA256Util.encrypt(password) : null;
+			String encryptedPassword = password != null ? SHA256Util.encrypt(password) : null;
 			
-    		// 입력된 비밀번호와 DB에 저장된 비밀번호 비교
-			result =  encryptedpPassword.equals(selectUser.getPassword()); // 비밀번호 비교
-			
-			session.commit(); // 트랜잭션 커밋
-		} catch (Exception e) {
-			e.printStackTrace();
-			session.rollback();
+			return encryptedPassword.equals(selectUser.getPassword());
 		}
-		return result;
 	}
 	
 	 public User getUserById(String userId) {
-		 SqlSession session = sqlSessionFactory.openSession();
-		 User selectUser = userDAO.getUserById(session, userId); // 사용자 
-		 return selectUser;
+		try (SqlSession session = sqlSessionFactory.openSession()) {
+			return userDAO.getUserById(session, userId);
+		}
 	 }
 
 	@Override
@@ -95,7 +79,21 @@ public class UserServiceImpl implements UserService {// 보안때문, 인터페�
 		return userDAO.updateUser(user);
 	}
 
-	
+	@Override
+	public boolean deleteUser(String userId) {
+		try (SqlSession session = MybatisUtil.getSqlSessionFactory().openSession()) {
+			boolean result = userDAO.deleteUser(session, userId);
+			if (result) {
+				session.commit(); // 회원 탈퇴 성공 시 커밋 추가
+			} else {
+				session.rollback();
+			}
+			return result;
+		} catch (Exception e) {
+			logger.error("Error in deleteUser: ", e);
+			return false;
+		}
+	}
 	 
 
 }

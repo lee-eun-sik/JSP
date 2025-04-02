@@ -165,6 +165,25 @@ public class UserController extends HttpServlet {
             			jsonResponse.put("message", "회원 정보 수정에 실패했습니다.");
             		}
             	}
+            } else if ("/user/delete.do".equals(path)) {
+            	HttpSession session = request.getSession();
+            	User sessionUser = (User) session.getAttribute("user");
+            	
+            	if (sessionUser == null) {
+            		jsonResponse.put("success", false);
+            		jsonResponse.put("message", "로그인이 필요합니다.");
+            	} else {
+            		boolean deleteResult = userService.deleteUser(sessionUser.getUserId());
+            		
+            		if (deleteResult) {
+            			session.invalidate(); // 세션 삭제
+            			jsonResponse.put("success", true);
+            			jsonResponse.put("message", "회원 탈퇴가 완료되었습니다.");
+            		} else {
+            			jsonResponse.put("success", false);
+            			jsonResponse.put("message", "회원 탈퇴에 실패했습니다.");
+            		}
+            	}
             }
          
         } catch (Exception e) {
