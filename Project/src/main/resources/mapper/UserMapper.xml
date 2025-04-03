@@ -63,5 +63,12 @@
             UPDATE_DT = SYSDATE  
         WHERE USER_ID = #{userId} AND DEL_YN = 'N'
     </update>
-
+	
+	<!-- 아이디 중복 체크 -->
+	<select id="checkUserIdDuplicate" parameterType="model.user.User" resultType="int">
+		SELECT 
+			COUNT(*) 
+		FROM USERS
+		WHERE USER_ID = #{userId} 
+	</select>
 </mapper>

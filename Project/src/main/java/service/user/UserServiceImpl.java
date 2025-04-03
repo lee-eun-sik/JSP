@@ -95,5 +95,13 @@ public class UserServiceImpl implements UserService {// 보안때문, 인터페�
 		}
 	}
 	 
-
+	@Override
+	public boolean isUserIdDuplicate(String userId) {
+		try (SqlSession session = sqlSessionFactory.openSession()) {
+			return userDAO.isUserIdDuplicate(session, userId);
+		} catch (Exception e) {
+			logger.error("Error in isUserIdDuplicate: ", e);
+			return false;
+		}
+	}
 }

@@ -12,8 +12,47 @@
 <script src="/js/common.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<style>
+body {
+        background-image: url('<%= request.getContextPath() %>/images/background.jpg'); /* 배경 이미지 */
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+</style>
 <script type="text/javascript">
 	$(document).ready(function () {
+		$("#background").hide(); // 헤더 숨기기
+		$("#p").hide(); // 단락 숨기기
+		$("#p1").hide(); //단락 숨기기
+		$("#join").hide(); // 회원가입 버튼 숨기기
+		$("#login").hide(); // 로그인 버튼 숨기기
+		$("#checkDuplicate").click(function () {
+			let userId = $("#userId").val().trim();
+			
+			if (userId === "") {
+				alert("아이디를 입력하세요.");
+				$("#userId").focus();
+				return;
+			}
+			
+			$.ajax({
+				type: "POST",
+				url: "/user/checkDuplicate.do",
+				data: { userId: userId },
+				success: function(response) {
+					console.log(response)
+					if (response.success) {
+						alert("이미 사용중인 아이디입니다.");
+					} else {
+						alert("사용 가능한 아이디입니다.");
+					}
+				},
+				error: function ()  {
+					alert("서버 오류가 발생했습니다.");
+				}
+			});
+		});
 		$("#joinForm").submit(function (event) {
 			event.preventDefault();//기본 제출 방지
 			let userId = $("#userId").val().trim();
@@ -94,31 +133,34 @@
 </script>
 </head>
 <body>
+<!-- ✅ 헤더 포함: 가장 위에 위치 -->
+<jsp:include page="header.jsp" />
 				<h1>상표</h1>	
 				<h2>회원가입</h2>
 				<form id="joinForm" action="/user/register.do" method="POST">
-					<label for="userId">아이디</label>
-					<input type="text" id="userId" name="userId"maxlength="20" placeholder="Placeholder" required/>
+					<label for="userId">*아이디</label>
+					<input type="text" id="userId" name="userId"maxlength="20" placeholder="Placeholder" required/> 
+					<button type="button" id="checkDuplicate">중복체크</button>
 					<br/>
-					<label for="password">비밀번호</label>
+					<label for="password">*비밀번호</label>
 					<input type="password" id="password" name="password" maxlength="20" placeholder="Placeholder" required/>
 					<br/>
-					<label for="password_confirm">비밀번호확인</label>
+					<label for="password_confirm">*비밀번호확인</label>
 					<input type="password" id="password_confirm" name="password_confirm" maxlength="20" placeholder="Placeholder" required/>
 					<br/>
-					<label for="username">이름</label>
+					<label for="username">*이름</label>
 					<input type="text" id="username" name="username" maxlength="15"  placeholder="Placeholder" required/>
 					<br/>
-					<label for="gender">성별</label>
+					<label for="gender">*성별</label>
 					<input type="radio" name="gender" value="M"/>남성
 					<input type="radio" name="gender" value="F"/>여성 <br>
-					<label for="phone">전화번호</label>
+					<label for="phone">*전화번호</label>
 					<input type="tel" name="phonenumber" pattern="[0-9]{2,3}-[0-9]{4}-[0-9]{4}" placeholder="Placeholder" required>
 					<br> 
-					<label for="email">이메일:</label>
+					<label for="email">*이메일</label>
 					<input type="email" id="email" name="email" maxlength="100" placeholder="Placeholder" required/>
 					<br/>
-					<label for="birthdate">생년월일</label>
+					<label for="birthdate">*생년월일</label>
 					<input type="text" id="birthdate" name="birthdate" placeholder="MM/DD/YYYY" required/><br>
 					<div>
 						<button type="submit" id="registerBtn">가입하기</button>

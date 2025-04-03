@@ -76,4 +76,9 @@ public class UserDAO {
     		return false;		
     	}
     }
+    
+    public boolean isUserIdDuplicate(SqlSession session, String userId) {
+    	Integer count = session.selectOne("UserMapper.checkUserIdDuplicate", userId);
+    	return count != null && count > 0;
+    }
 }

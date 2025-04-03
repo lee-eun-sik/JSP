@@ -51,7 +51,9 @@ public class UserController extends HttpServlet {
 	            request.getRequestDispatcher("/WEB-INF/jsp/user/main.jsp").forward(request, response);
 	      } else if ("/user/userInfo.do".equals(path)) {
 	            request.getRequestDispatcher("/WEB-INF/jsp/user/userInfo.jsp").forward(request, response);
-	      } 
+	      } else if("/user/header.do".equals(path)) {
+          	request.getRequestDispatcher("/WEB-INF/jsp/user/header.jsp").forward(request, response);    	
+          }
 	}
 
 	/**
@@ -108,6 +110,7 @@ public class UserController extends HttpServlet {
     				session.setAttribute("user", selectUser);
     				
     				jsonResponse.put("success", true); // 성공
+    				jsonResponse.put("redirectUrl", "/user/header.do"); // 성공 시 header.jsp로 이동
     			} else {
     				//실패시
     				jsonResponse.put("success", false); // 실패 
@@ -184,7 +187,13 @@ public class UserController extends HttpServlet {
             			jsonResponse.put("message", "회원 탈퇴에 실패했습니다.");
             		}
             	}
-            }
+            } else if("/user/checkDuplicate.do".equals(path)) {
+            	String userId = request.getParameter("userId");
+            	boolean isDuplicate = userService.isUserIdDuplicate(userId);
+            	
+            	jsonResponse.put("success", isDuplicate);
+            	jsonResponse.put("message", isDuplicate ? "이미 사용 중인 아이디입니다." : "사용 가능한 아이디입니다.");
+            } 
          
         } catch (Exception e) {
             jsonResponse.put("success", false); // 오류 발생 시

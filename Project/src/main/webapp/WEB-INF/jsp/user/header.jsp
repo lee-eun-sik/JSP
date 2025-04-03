@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <title>헤더 메인 페이지</title>
-
+<script src="/js/jquery-3.7.1.min.js"></script>
 <style>
 
 	
@@ -19,6 +19,7 @@
     .menu {
         display: flex; /* 메뉴 항목을 가로 정렬 */
         gap: 15px; /* 각 메뉴 항목 간 여백 */
+        position: relative;
     }
     .menu a {
 	    display: inline-block; /* 가로 길이를 적용하기 위해 inline-block 사용 */
@@ -31,10 +32,34 @@
         border-radius: 40px; /* 모서리를 둥글게 */
     }
     
+    /* 드롭다운 스타일 */
+    .dropdown {
+    	position: relative;
+    }
+    
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        overflow: hidden;
+        width: 130px;
+    }
+
+    .dropdown-content a {
+        display: block;
+        padding: 10px;
+        color: black;
+        text-decoration: none;
+        background: orange;
+        text-align: center;
+    }
+
     
     img {
         width: 110px;
         height: 110px;
+        z-index: -5;
     }
     .signInfo button{
     	background-color: #5A7262;
@@ -79,28 +104,83 @@
 </head>
 <body>
 
-
 <nav>
 
-<img src="logo.png">
+<img src="/images/logo.png">
 	<div class="menu">
 		<a href="noticeBoard.jsp">공지사항</a>
 		<a href="petsitter.jsp">펫시터</a>
 		<a href="reservationList.jsp">예약목록</a>
 		<a href="reviewList.jsp">리뷰목록</a>
-		<a href="community.jsp">커뮤니티</a>
+		
+		<!-- 드롭다운 메뉴 -->
+		<div class="dropdown">
+			<a href="#" id="communityBtn">커뮤니티 ▼</a>
+			<div class="dropdown-content">
+				<a href="freeeBoard.jsp">자유게시판</a>
+				<a href="petPhotoShare.jsp">펫사진공유게시판</a>
+			</div>
+		</div>
 	</div>
-	<div class="signInfo">
-		<button type="button" name="login" id="login">로그인</button>
-		<button type="button" name="join" id="join">회원가입</button>
-	</div>
+	<c:choose>
+	    <c:when test="${empty sessionScope.user}">
+	        <!-- 로그인하지 않은 상태 -->
+	        <div class="signInfo">
+	            <button type="button" name="login" id="login">로그인</button>
+	            <button type="button" name="join" id="join">회원가입</button>
+	        </div>
+	    </c:when>
+	    <c:otherwise>
+	        <!-- 로그인한 상태 -->
+	        <div class="signInfo">
+	            <p id="userGreeting">안녕하세요, <a href="main.do">${sessionScope.user.userId}님!</a></p>
+	        </div>
+	    </c:otherwise>
+	</c:choose>
 </nav>
 <div class="backgroundimg">
-    <img src="pet.png">
+	<c:if test="${pageName ne 'manager'}">
+    <img id="background" src="/images/pet.png">
     <div class="text-overlay">
         <p id="p">전문 펫시터가 돌봐드려요</p>
         <p id= "p1">나와 내 반려동물을 위한 돌봄 서비스</p>
     </div>
+    </c:if>
 </div>
+
+<script>
+$(document).ready(function() {
+	//커뮤니티 버튼 클릭 시 드롭다운 메뉴 표시
+	$("#communityBtn").click(function(event) {
+		event.preventDefault(); // 링크 이동 방지
+		$(".dropdown-content").toggle(); // 드롭다운 표시/숨김
+	});
+	
+	// 메뉴 외부 클릭 시 드롭다운 닫기
+	$(document).click(function(event) {
+		if (!$(event.target).closest('.dropdown').length) {
+			$(".dropdown-content").hide();
+		}
+	});
+	
+	// 로그인 버튼 클릭 시 login.jsp로 이동
+	$("#login").click(function() {
+        window.location.href = "/user/login.do";
+    });
+	
+	// 회원가입 버튼 클릭 시 join.jsp로 이동
+	$("#join").click(function() {
+		window.location.href = "/user/join.do";
+	});
+	
+	// 로그인 여부 확인 후 버튼 숨기기 및 사용자 인사말 표시
+	var userId = "${sessionScope.user.userId}"; //서버에서 받아온 유저 ID
+	
+	if (userId) {
+		$("#login, #join").hide(); // 로그인 & 회원가입 버튼 숨기기
+		$("#userGreeting").show(); // 사용자 환영 메시지 표시
+	}
+});
+</script>
 </body>
 </html>

@@ -6,8 +6,19 @@
 <meta charset="UTF-8">
 <title>로그인 화면</title>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<style>
+body {
+        background-image: url('<%= request.getContextPath() %>/images/background.jpg'); /* 배경 이미지 */
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+</style>
 </head>
 <body>
+<!-- ✅ 헤더 포함: 가장 위에 위치 -->
+<jsp:include page="header.jsp" />
+			
 			<form method="get"  id="loginForm">
 						<h2>상표</h2>
 						<h4>로그인</h4>
@@ -21,7 +32,13 @@
 			</form>
 			
 			<script type="text/javascript">
+			
 				$(document).ready(function() {
+					$("#background").hide(); // 헤더 배경 사진 숨기기
+					$("#p").hide(); // 단락 숨기기
+					$("#p1").hide(); //단락 숨기기
+					$("#join").hide(); // 회원가입 버튼 숨기기
+					$("#login").hide(); // 로그인 버튼 숨기기
 						//로그인 폼에 섬밋이벤트시 작동
 						$("#loginForm").submit(function(event) {
 							event.preventDefault(); // 기본 폼 제출 방지
@@ -36,7 +53,7 @@
 									// 응답 처리
 									if (response.success) {
 										alert("로그인 성공하셨습니다.");
-										window.location.href="/user/main.do"; //로그인 성공 후 메인 페이지로 이동
+										window.location.href=response.redirectUrl; // JSON 응답에서 URL을 가져와 이동
 									} else {
 										alert("로그인에 실패하셨습니다.")
 									}

@@ -29,4 +29,6 @@ public interface UserService {
     boolean updateUser(User user);  // 수정
     
     boolean deleteUser(String userId); //삭제
+    
+    boolean isUserIdDuplicate(String userId); //아이디 중복체크
 }
