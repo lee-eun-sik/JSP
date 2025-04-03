@@ -1,5 +1,9 @@
 package dao.user;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.logging.log4j.LogManager;
@@ -78,7 +82,24 @@ public class UserDAO {
     }
     
     public boolean isUserIdDuplicate(SqlSession session, String userId) {
-    	Integer count = session.selectOne("UserMapper.checkUserIdDuplicate", userId);
-    	return count != null && count > 0;
+    	int count = session.selectOne("UserMapper.checkUserIdDuplicate", userId);
+    	return count > 0;
+    }
+    
+    public boolean isAdmin(SqlSession session, String userId) {
+    	String role = session.selectOne("UserMapper.getUserRoleById", userId);
+    	
+    	// 여러 관리자 역할을 포함하는 경우
+    	Set<String> adminRoles = new HashSet<>(Arrays.asList("admin", "superadmin", "manager"));
+    	
+    	return role != null && adminRoles.contains(role);
+    }
+    
+    public String getUserRoleById(SqlSession sqlSession, String userId) {
+        return sqlSession.selectOne("dao.user.UserMapper.getUserRoleById", userId);
+    }
+
+    public Integer isAdminUser(SqlSession sqlSession, String userId) {
+        return sqlSession.selectOne("dao.user.UserMapper.isAdminUser", userId);
     }
 }

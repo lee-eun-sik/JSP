@@ -3,11 +3,17 @@ package controller.user;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.apache.ibatis.session.SqlSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
+
+import dao.user.UserDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -17,6 +23,7 @@ import jakarta.servlet.http.HttpSession;
 import model.user.User;
 import service.user.UserService;
 import service.user.UserServiceImpl;
+import util.MybatisUtil;
 
 
 @WebServlet("/user/*")
@@ -53,6 +60,33 @@ public class UserController extends HttpServlet {
 	            request.getRequestDispatcher("/WEB-INF/jsp/user/userInfo.jsp").forward(request, response);
 	      } else if("/user/header.do".equals(path)) {
           	request.getRequestDispatcher("/WEB-INF/jsp/user/header.jsp").forward(request, response);    	
+          } else if ("/user/manager.do".equals(path)) {  // ✅ 추가
+        	  HttpSession session = request.getSession();
+        	  User user = (User) session.getAttribute("user");
+        	  if (user == null) {
+        		  response.sendRedirect("/user/login.do");
+        		  return;
+        	  }
+        	  
+        	  try (SqlSession sqlSession = MybatisUtil.getSqlSessionFactory().openSession()) {
+        		  UserDAO userDAO = new UserDAO();
+        		  
+        		  String role = userDAO.getUserRoleById(sqlSession, user.getUserId()); //DB에서 역할 조회
+        		  
+        		  //역할이 null이면 기본값을 'user'로 설정
+        		  if (role == null) {
+        			  role = "user";
+        		  }
+        		// 관리자 여부 조회
+        	        Integer isAdmin = userDAO.isAdminUser(sqlSession, user.getUserId());
+
+        	        // 관리자가 아니면 로그인 페이지로 이동
+        	        if (isAdmin == null || isAdmin == 0) { 
+        	            response.sendRedirect("/user/login.do");
+        	            return;
+        	        }
+        	  }
+              request.getRequestDispatcher("/WEB-INF/jsp/user/manager.jsp").forward(request, response);
           }
 	}
 

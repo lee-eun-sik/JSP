@@ -13,6 +13,7 @@ public class User extends Model {
 	private String gender; //성별
 	private String phonenumber; //전화번호
 	private Date birthdate;
+	private String role; // 역할 필드 추가 (관리자, 일반 사용자 구분)
 	//기본 생성자
 	
 	public User() {
@@ -116,6 +117,14 @@ public class User extends Model {
 
 	public void setUpdateDt(String updateDt) {
 		this.updateDt = updateDt;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
 	}
 
 	

@@ -8,7 +8,7 @@
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <style>
 body {
-        background-image: url('<%= request.getContextPath() %>/images/background.jpg'); /* 배경 이미지 */
+        background-image: url('<%= request.getContextPath() %>/images/pet.jpg'); /* 배경 이미지 */
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
