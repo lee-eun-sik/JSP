@@ -97,7 +97,7 @@
         <div id="mypage-container">
             <h1 id="mypage">마이페이지</h1>
             <div id="container">
-                <button type="button">마이페이지</button>
+                <button type="button"onclick="location.href='/user/main.do'">마이페이지</button>
                 <button type="button">예약내역</button>
             </div>
             <form method="post" id="logoutForm">
@@ -126,7 +126,6 @@
                 <div class="button-group">
                     <button type="button">회원탈퇴</button>
                     <button type="button">회원정보수정</button>
-                    <button type="submit">로그아웃</button>
                 </div>
                 <br>
             </form>

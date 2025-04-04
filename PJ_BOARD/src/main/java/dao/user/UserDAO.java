@@ -1,5 +1,9 @@
 package dao.user;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.logging.log4j.LogManager;
@@ -47,5 +51,9 @@ public class UserDAO {
     	// 사용자 정보를 DB에서 검색
     	User user = session.selectOne("UserMapper.deleteUser", userId);
     	return user;
+    }
+    
+    public String getUserRole(SqlSession session, String userId) {
+        return session.selectOne("UserMapper.getUserRoleById", userId);
     }
 }

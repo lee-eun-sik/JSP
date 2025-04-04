@@ -31,4 +31,6 @@ public interface UserService {
     boolean deleteUser(String userId); //삭제
     
     boolean isUserIdDuplicate(String userId); //아이디 중복체크
+    
+    boolean changePassword(String userId, String currentPassword, String newPassword); // 비밀번호 변경
 }

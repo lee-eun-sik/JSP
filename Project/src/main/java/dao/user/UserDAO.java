@@ -1,7 +1,12 @@
 package dao.user;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.ibatis.session.SqlSession;
@@ -16,7 +21,6 @@ import util.MybatisUtil;
 public class UserDAO {
     private static final Logger logger = LogManager.getLogger(UserDAO.class); // Logger 인스턴스 생성
     private SqlSessionFactory sqlSessionFactory = MybatisUtil.getSqlSessionFactory(); // Mybatis 세션 팩토리 추가
-
     /**
      * 사용자 회원가입
      * @param userId 사용자 ID
@@ -25,6 +29,9 @@ public class UserDAO {
      * @param email 이메일
      * @return 성공 여부
      */
+    public UserDAO() {
+    
+    }
     public boolean registerUser(SqlSession session, User user) {
         try {
         	int result = session.insert("UserMapper.registerUser", user);
@@ -86,20 +93,21 @@ public class UserDAO {
     	return count > 0;
     }
     
-    public boolean isAdmin(SqlSession session, String userId) {
-    	String role = session.selectOne("UserMapper.getUserRoleById", userId);
-    	
-    	// 여러 관리자 역할을 포함하는 경우
-    	Set<String> adminRoles = new HashSet<>(Arrays.asList("admin", "superadmin", "manager"));
-    	
-    	return role != null && adminRoles.contains(role);
-    }
     
-    public String getUserRoleById(SqlSession sqlSession, String userId) {
-        return sqlSession.selectOne("dao.user.UserMapper.getUserRoleById", userId);
+    
+    public String getUserRoleById(SqlSession session, String userId) {
+        return session.selectOne("UserMapper.getUserRoleById", userId);
     }
 
-    public Integer isAdminUser(SqlSession sqlSession, String userId) {
-        return sqlSession.selectOne("dao.user.UserMapper.isAdminUser", userId);
+
+    public boolean updatePassword(SqlSession session, String userId, String newPassword) {
+    	try {
+            int result = session.update("UserMapper.updatePassword", 
+                Map.of("userId", userId, "password", newPassword));
+            return result > 0;  // 1 이상이면 성공
+        } catch (Exception e) {
+            logger.error("Error in updatePassword: ", e);
+            return false;
+        }
     }
 }

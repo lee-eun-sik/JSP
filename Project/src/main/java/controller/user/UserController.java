@@ -61,32 +61,39 @@ public class UserController extends HttpServlet {
 	      } else if("/user/header.do".equals(path)) {
           	request.getRequestDispatcher("/WEB-INF/jsp/user/header.jsp").forward(request, response);    	
           } else if ("/user/manager.do".equals(path)) {  // ✅ 추가
-        	  HttpSession session = request.getSession();
-        	  User user = (User) session.getAttribute("user");
-        	  if (user == null) {
-        		  response.sendRedirect("/user/login.do");
-        		  return;
-        	  }
-        	  
-        	  try (SqlSession sqlSession = MybatisUtil.getSqlSessionFactory().openSession()) {
-        		  UserDAO userDAO = new UserDAO();
-        		  
-        		  String role = userDAO.getUserRoleById(sqlSession, user.getUserId()); //DB에서 역할 조회
-        		  
-        		  //역할이 null이면 기본값을 'user'로 설정
-        		  if (role == null) {
-        			  role = "user";
-        		  }
-        		// 관리자 여부 조회
-        	        Integer isAdmin = userDAO.isAdminUser(sqlSession, user.getUserId());
+        	  	HttpSession session = request.getSession();
+        	    User user = (User) session.getAttribute("user");
 
-        	        // 관리자가 아니면 로그인 페이지로 이동
-        	        if (isAdmin == null || isAdmin == 0) { 
-        	            response.sendRedirect("/user/login.do");
+        	    if (user == null) {
+        	        response.sendRedirect("/user/login.do");
+        	        return;
+        	    }
+
+        	    try (SqlSession sqlSession = MybatisUtil.getSqlSessionFactory().openSession()) {
+        	        UserDAO userDAO = new UserDAO();
+        	        String role = userDAO.getUserRoleById(sqlSession, user.getUserId());
+
+        	        // 역할이 null이면 기본값을 'guest'로 설정
+        	        if (role == null) {
+        	            role = "guest";
+        	        }
+
+        	        // 관리자 역할 목록
+        	        Set<String> adminRoles = new HashSet<>(Arrays.asList("admin", "superadmin", "manager", "user"));
+
+        	        if (!adminRoles.contains(role.toLowerCase())) {  
+        	            response.sendRedirect("/user/main.do");  // 관리자가 아니면 메인 페이지로 이동
         	            return;
         	        }
-        	  }
-              request.getRequestDispatcher("/WEB-INF/jsp/user/manager.jsp").forward(request, response);
+
+        	        // ✅ forward()를 try 블록 내부에서 실행해야 에러 없음
+        	        request.getRequestDispatcher("/WEB-INF/jsp/user/manager.jsp").forward(request, response);
+
+        	    } catch (Exception e) {
+        	        logger.error("Error in /user/manager.do", e);
+        	        response.sendRedirect("/error.do"); // 에러 발생 시 에러 페이지로 리디렉트
+        	    }
+        	    
           }
 	}
 
@@ -118,7 +125,7 @@ public class UserController extends HttpServlet {
                 user.setBirthdate(birthdate);
                 user.setEmail(request.getParameter("email"));
                 user.setCreateId("SYSTEM");
-                
+                user.setRole("user");
                 if(!user.getPassword().equals(user.getPassword_confirm())) {
                 	jsonResponse.put("error", "비밀번호가 일치하지 않습니다.");
                 	out.print(jsonResponse.toString());
@@ -152,18 +159,12 @@ public class UserController extends HttpServlet {
         		
             } else if ("/user/logout.do".equals(path)) { 
             	
-            	HttpSession session = request.getSession();
-            	User user = (User) session.getAttribute("user");
-				User selectUser = userService.getUserById(user.getUserId());
-				
-				if(selectUser != null) {
-					//세션 삭제
-					session.invalidate();
-					jsonResponse.put("success", true); // 성공 
-				} else {
-					jsonResponse.put("success", false); // 실패 
-				}
-				
+            	HttpSession session = request.getSession(false); // 기존 세션 가져오기 (없으면 null)
+                if (session != null) {
+                    session.invalidate(); // 세션 무효화
+                }
+                jsonResponse.put("success", true); // 성공 응답
+                
             } else if ("/user/update.do".equals(path)) {
             	HttpSession session = request.getSession();
             	User sessionUser = (User) session.getAttribute("user");
@@ -227,7 +228,29 @@ public class UserController extends HttpServlet {
             	
             	jsonResponse.put("success", isDuplicate);
             	jsonResponse.put("message", isDuplicate ? "이미 사용 중인 아이디입니다." : "사용 가능한 아이디입니다.");
-            } 
+            } else if ("/user/changePassword.do".equals(path)) {
+                HttpSession session = request.getSession();
+                User user = (User) session.getAttribute("user");
+
+                if (user == null) {
+                    jsonResponse.put("success", false);
+                    jsonResponse.put("message", "로그인이 필요합니다.");
+                } else {
+                    JSONObject requestData = new JSONObject(request.getReader().lines().reduce("", String::concat));
+                    String currentPassword = requestData.getString("currentPassword");
+                    String newPassword = requestData.getString("newPassword");
+
+                    boolean isUpdated = userService.changePassword(user.getUserId(), currentPassword, newPassword);
+
+                    if (isUpdated) {
+                        jsonResponse.put("success", true);
+                        jsonResponse.put("message", "비밀번호가 변경되었습니다.");
+                    } else {
+                        jsonResponse.put("success", false);
+                        jsonResponse.put("message", "현재 비밀번호가 일치하지 않습니다.");
+                    }
+                }
+            }
          
         } catch (Exception e) {
             jsonResponse.put("success", false); // 오류 발생 시

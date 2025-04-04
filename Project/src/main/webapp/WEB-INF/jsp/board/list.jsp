@@ -10,7 +10,7 @@
 <title>게시판 목록</title>
 	<script src = "/js/jquery_3.7.1.min.js"></script>
 	<script src = "/js/common.js"></script>
-	<script src ="/js/tinymce/tinymse.min.js"></script>
+	
 	
 </head>
 <body>

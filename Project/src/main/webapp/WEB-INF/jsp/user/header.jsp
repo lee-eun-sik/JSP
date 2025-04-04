@@ -1,12 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>    
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%> 
+
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>헤더 메인 페이지</title>
 <script src="/js/jquery-3.7.1.min.js"></script>
+<script src="/js/logout.js"></script>
 <style>
 
 	
@@ -112,7 +114,6 @@
 		<a href="petsitter.jsp">펫시터</a>
 		<a href="reservationList.jsp">예약목록</a>
 		<a href="reviewList.jsp">리뷰목록</a>
-		
 		<!-- 드롭다운 메뉴 -->
 		<div class="dropdown">
 			<a href="#" id="communityBtn">커뮤니티 ▼</a>
@@ -122,21 +123,33 @@
 			</div>
 		</div>
 	</div>
+
 	<c:choose>
-	    <c:when test="${empty sessionScope.user}">
-	        <!-- 로그인하지 않은 상태 -->
-	        <div class="signInfo">
-	            <button type="button" name="login" id="login">로그인</button>
-	            <button type="button" name="join" id="join">회원가입</button>
-	        </div>
-	    </c:when>
-	    <c:otherwise>
-	        <!-- 로그인한 상태 -->
-	        <div class="signInfo">
-	            <p id="userGreeting">안녕하세요, <a href="main.do">${sessionScope.user.userId}님!</a></p>
-	        </div>
-	    </c:otherwise>
-	</c:choose>
+    <c:when test="${empty sessionScope.user}">
+        <!-- 로그인하지 않은 상태 -->
+        <div class="signInfo">
+            <button type="button" name="login" id="login">로그인</button>
+            <button type="button" name="join" id="join">회원가입</button>
+        </div>
+    </c:when>
+    <c:otherwise>
+        <!-- 로그인한 상태 -->
+        <div class="signInfo">
+            <p id="userGreeting">
+                안녕하세요, 
+                <c:choose>
+                    <c:when test="${sessionScope.user.role eq 'user'}">
+                        <a href="/user/manager.do">${sessionScope.user.userId}님!</a>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="/user/main.do">${sessionScope.user.userId}님!</a>
+                    </c:otherwise>
+                </c:choose>
+            </p>
+            <button type="button" id="logout">로그아웃</button>
+        </div>
+    </c:otherwise>
+</c:choose>
 </nav>
 <div class="backgroundimg">
 	<c:if test="${pageName ne 'manager'}">
@@ -173,6 +186,27 @@ $(document).ready(function() {
 		window.location.href = "/user/join.do";
 	});
 	
+	$("#logout").click(function () {
+        console.log("로그아웃 버튼 클릭됨");
+
+        $.ajax({
+            url: "/user/logout.do",
+            type: "POST",
+            dataType: "json",
+            success: function (response) {
+                if (response.success) {
+                    alert("로그아웃 되었습니다.");
+                    window.location.href = "/user/login.do";
+                } else {
+                    alert("로그아웃에 실패했습니다.");
+                }
+            },
+            error: function () {
+                alert("서버 오류로 로그아웃에 실패했습니다.");
+            }
+        });
+    });
+	
 	// 로그인 여부 확인 후 버튼 숨기기 및 사용자 인사말 표시
 	var userId = "${sessionScope.user.userId}"; //서버에서 받아온 유저 ID
 	
@@ -180,6 +214,8 @@ $(document).ready(function() {
 		$("#login, #join").hide(); // 로그인 & 회원가입 버튼 숨기기
 		$("#userGreeting").show(); // 사용자 환영 메시지 표시
 	}
+	
+	
 });
 </script>
 </body>

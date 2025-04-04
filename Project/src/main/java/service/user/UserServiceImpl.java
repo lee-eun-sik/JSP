@@ -104,4 +104,38 @@ public class UserServiceImpl implements UserService {// 보안때문, 인터페�
 			return false;
 		}
 	}
+	
+	@Override
+	public boolean changePassword(String userId, String currentPassword, String newPassword) {
+	    try (SqlSession session = sqlSessionFactory.openSession()) {
+	        User user = userDAO.getUserById(session, userId);
+	        
+	        if (user == null) {
+	            return false; // 사용자가 존재하지 않음
+	        }
+
+	        // 현재 비밀번호 암호화 후 비교
+	        String encryptedCurrentPassword = SHA256Util.encrypt(currentPassword);
+	        if (encryptedCurrentPassword.equals(user.getPassword())) {  // ✅ 올바른 String 비교 방법
+	            System.out.println("비밀번호 일치");
+	        } else {
+	            System.out.println("현재 비밀번호가 일치하지 않습니다.");
+	        }
+	        System.out.println("입력된 비밀번호(암호화됨): " + encryptedCurrentPassword);
+	        System.out.println("DB 저장 비밀번호: " + user.getPassword());
+	        // 새로운 비밀번호 암호화 후 저장
+	        String encryptedNewPassword = SHA256Util.encrypt(newPassword);
+	        boolean result = userDAO.updatePassword(session, userId, encryptedNewPassword);
+
+	        if (result) {
+	            session.commit(); // 변경 성공 시 커밋
+	        } else {
+	            session.rollback(); // 변경 실패 시 롤백
+	        }
+	        return result;
+	    } catch (Exception e) {
+	        logger.error("Error in changePassword: ", e);
+	        return false;
+	    }
+	}
 }
