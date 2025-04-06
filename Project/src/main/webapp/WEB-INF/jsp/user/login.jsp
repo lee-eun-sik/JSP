@@ -19,7 +19,7 @@ body {
 <!-- ✅ 헤더 포함: 가장 위에 위치 -->
 <jsp:include page="header.jsp" />
 			
-			<form method="get"  id="loginForm">
+			<form method="post"  id="loginForm">
 						<h2>상표</h2>
 						<h4>로그인</h4>
 						<input type="text" name="id" placeholder="아이디"><br/>
@@ -42,11 +42,12 @@ body {
 						//로그인 폼에 섬밋이벤트시 작동
 						$("#loginForm").submit(function(event) {
 							event.preventDefault(); // 기본 폼 제출 방지
-							
+							const formData = $(this).serialize();
+						    console.log("폼 데이터:", formData);  // 👈 이거로 콘솔에 실제 값 확인해보세요
 							$.ajax({
 								url: '/user/loginCheck.do', // 로그인 요청 URL
 								type: 'POST',
-								data: $(this).serialize(), // 폼 데이터 직렬화
+								data: formData, // 폼 데이터 직렬화
 								dataType: 'json',
 								success: function(response) {
 									console.log(response);

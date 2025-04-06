@@ -1,11 +1,12 @@
 package model;
 
+import java.util.Date;
 
 public class Model {
    
 	public String createId; // 계정 생성자 ID
 	public String updateId; // 계정 수정자 ID
-	public String createDt; // 생성일
+	public Date createDt; // 생성일
 	public String updateDt; // 수정일
 	
 
@@ -29,11 +30,11 @@ public class Model {
 		this.updateId = updateId;
 	}
 
-	public String getCreateDt() {
+	public Date getCreateDt() {
 		return createDt;
 	}
 
-	public void setCreateDt(String createDt) {
+	public void setCreateDt(Date createDt) {
 		this.createDt = createDt;
 	}
 

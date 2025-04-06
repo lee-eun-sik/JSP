@@ -1,13 +1,9 @@
 package dao.user;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.HashSet;
+
+
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -109,5 +105,9 @@ public class UserDAO {
             logger.error("Error in updatePassword: ", e);
             return false;
         }
+    }
+    
+    public List<User> getAllUsers(SqlSession session) {
+        return session.selectList("UserMapper.getAllUsers");
     }
 }

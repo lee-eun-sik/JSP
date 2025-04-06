@@ -3,60 +3,71 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="UserMapper">
+<resultMap id="userResultMap" type="model.user.User">
+    <result property="userId" column="USER_ID"/>
+    <result property="username" column="USERNAME"/>
+    <result property="password" column="PASSWORD"/>
+    <result property="email" column="EMAIL"/>
+    <result property="createId" column="CREATE_ID"/>
+    <result property="updateId" column="UPDATE_ID"/>
+    <result property="createDt" column="CREATE_DT"/>
+    <result property="updateDt" column="UPDATE_DT"/>
+    <result property="role" column="ROLE"/>
+    <result property="gender" column="GENDER"/>        <!-- 성별이 있다면 -->
+    <result property="phonenumber" column="PHONENUMBER"/> <!-- 전화번호가 있다면 -->
+</resultMap>
 
     <!-- 사용자 ID로 사용자 정보 조회 -->
-    <select id="getUserById" parameterType="string" resultType="model.user.User">
-        SELECT 
-            USER_ID, 
-            USERNAME, 
-            PASSWORD, 
-            EMAIL, 
-            CREATE_ID, 
-            UPDATE_ID, 
-            CREATE_DT, 
-            UPDATE_DT,
-            ROLE
-        FROM 
-            USERS
-        WHERE 
-            USER_ID = #{userId}
-            AND DEL_YN = 'N'
-    </select>
+    <select id="getUserById" resultMap="userResultMap" parameterType="string">
+	    SELECT USER_ID, 
+	    			USERNAME, 
+	    			PASSWORD, 
+	    			EMAIL, 
+	    			CREATE_ID, 
+	    			UPDATE_ID, 
+	    			CREATE_DT, 
+	    			UPDATE_DT, 
+	    			ROLE
+	    FROM USERS
+	    WHERE USER_ID = #{userId}
+	      AND DEL_YN = 'N'
+	</select>
 
     <!-- 사용자 생성 -->
-    <insert id="registerUser" parameterType="model.user.User">
-	    INSERT INTO USERS (
-	        USER_ID, 
-	        USERNAME, 
-	        PASSWORD,
-	        EMAIL,
-	        CREATE_ID,
-	        PHONENUMBER,
-	        GENDER,
-	        BIRTH_DATE,
-	        ROLE
-	    ) VALUES (
-	        #{userId}, 
-	        #{username}, 
-	        #{password},
-	        #{email},
-	        #{createId},
-	        CASE WHEN #{phonenumber} IS NOT NULL THEN #{phonenumber} ELSE NULL END, 
-	        CASE WHEN #{gender} IS NOT NULL THEN #{gender} ELSE NULL END, 
-	        CASE WHEN #{birthdate} IS NOT NULL THEN #{birthdate, jdbcType=DATE} ELSE NULL END,
-	        CASE WHEN #{role} IS NOT NULL THEN #{role} ELSE 'USER' END
-	    )
-	</insert>
-
-    <!-- 사용자 업데이트 -->
-    <update id="updateUser" parameterType="model.user.User">
-        UPDATE USERS 
-        SET 
-            PHONENUMBER = CASE WHEN #{phonenumber} IS NOT NULL THEN #{phonenumber} ELSE PHONENUMBER END, 
-            EMAIL = CASE WHEN #{email} IS NOT NULL THEN #{email} ELSE EMAIL END, 
-            BIRTH_DATE = CASE WHEN #{birthdate} IS NOT NULL THEN #{birthdate} ELSE BIRTH_DATE END
-        WHERE USER_ID = #{userId}
-    </update>
+<insert id="registerUser" parameterType="model.user.User">
+    INSERT INTO USERS (
+        USER_ID, 
+        USERNAME, 
+        PASSWORD,
+        EMAIL,
+        CREATE_ID,
+        PHONENUMBER,
+        GENDER,
+        BIRTH_DATE,
+        CREATE_DT,
+        ROLE
+    ) VALUES (
+        #{userId}, 
+        #{username}, 
+        #{password},
+        #{email},
+        #{createId},
+        #{phonenumber},
+        #{gender},
+        #{birthdate, jdbcType=DATE},
+        SYSDATE,
+        #{role}
+    )
+</insert>
+<update id="updateUser" parameterType="model.user.User">
+    UPDATE USERS 
+    SET 
+        PHONENUMBER = CASE WHEN #{phonenumber} IS NOT NULL THEN #{phonenumber} ELSE PHONENUMBER END, 
+        EMAIL = CASE WHEN #{email} IS NOT NULL THEN #{email} ELSE EMAIL END, 
+        BIRTH_DATE = CASE WHEN #{birthdate} IS NOT NULL THEN #{birthdate} ELSE BIRTH_DATE END,
+        UPDATE_DT = SYSDATE
+    WHERE USER_ID = #{userId}
+</update>
 
     <!-- 사용자 삭제 (논리 삭제) -->
     <update id="deleteUser" parameterType="model.user.User">
@@ -85,5 +96,22 @@
 	    FROM USERS 
 	    WHERE USER_ID = #{userId}
 	      AND DEL_YN = 'N'
+	</select>
+	
+	<select id="getAllUsers" resultMap="userResultMap">
+	   SELECT 
+	       USER_ID,
+	       USERNAME,
+	       PASSWORD,
+	       EMAIL,
+	       PHONENUMBER,
+	       GENDER,
+	       CREATE_ID,
+	       UPDATE_ID,
+	       CREATE_DT,
+	       UPDATE_DT,
+	       ROLE
+	   FROM USERS
+	   WHERE DEL_YN = 'N'
 	</select>
 </mapper>

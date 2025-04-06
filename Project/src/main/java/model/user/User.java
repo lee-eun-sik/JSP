@@ -13,13 +13,29 @@ public class User extends Model {
 	private String gender; //성별
 	private String phonenumber; //전화번호
 	private Date birthdate;
+	private Date createDt;
 	private String role; // 역할 필드 추가 (관리자, 일반 사용자 구분)
+	private String decryptedPassword;
 	//기본 생성자
 	
 	public User() {
 		
 	}
 	
+
+
+	public Date getCreateDt() {
+		return createDt;
+	}
+
+
+
+	public void setCreateDt(Date createDt) {
+		this.createDt = createDt;
+	}
+
+
+
 	public String getPassword_confirm() {
 		return password_confirm;
 	}
@@ -103,14 +119,6 @@ public class User extends Model {
 		this.updateId = updateId;
 	}
 
-	public String getCreateDt() {
-		return createDt;
-	}
-
-	public void setCreateDt(String createDt) {
-		this.createDt = createDt;
-	}
-
 	public String getUpdateDt() {
 		return updateDt;
 	}
@@ -128,4 +136,12 @@ public class User extends Model {
 	}
 
 	
+
+	public String getDecryptedPassword() {
+	    return decryptedPassword;
+	}
+
+	public void setDecryptedPassword(String decryptedPassword) {
+	    this.decryptedPassword = decryptedPassword;
+	}
 }

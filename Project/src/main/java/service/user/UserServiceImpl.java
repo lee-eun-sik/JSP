@@ -1,5 +1,8 @@
 package service.user;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.logging.log4j.LogManager;
@@ -14,7 +17,7 @@ import util.SHA256Util;
 public class UserServiceImpl implements UserService {// 보안때문, 인터페이스 호출, 스프링때문에 생긴이유
     private static final Logger logger = LogManager.getLogger(UserServiceImpl.class);
     private UserDAO userDAO;
- 
+    private static final String NAMESPACE = "UserMapper";
     private SqlSessionFactory sqlSessionFactory; // MyBatis SQL 세션 팩토리
     
     /**
@@ -137,5 +140,19 @@ public class UserServiceImpl implements UserService {// 보안때문, 인터페�
 	        logger.error("Error in changePassword: ", e);
 	        return false;
 	    }
+	    
+	    
 	}
+
+	@Override
+	public List<User> getAllUsers() {
+	    try (SqlSession session = sqlSessionFactory.openSession()) {
+	        return session.selectList(NAMESPACE + ".getAllUsers");
+	    } catch (Exception e) {
+	        logger.error("Error in getAllUsers: ", e);
+	        return new ArrayList<>();
+	    }
+	}
+	
+	
 }

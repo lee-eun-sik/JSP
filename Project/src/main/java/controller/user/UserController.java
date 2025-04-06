@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.ibatis.session.SqlSession;
@@ -23,6 +24,7 @@ import jakarta.servlet.http.HttpSession;
 import model.user.User;
 import service.user.UserService;
 import service.user.UserServiceImpl;
+import util.AESUtil;
 import util.MybatisUtil;
 
 
@@ -61,13 +63,31 @@ public class UserController extends HttpServlet {
 	      } else if("/user/header.do".equals(path)) {
           	request.getRequestDispatcher("/WEB-INF/jsp/user/header.jsp").forward(request, response);    	
           } else if ("/user/manager.do".equals(path)) {  // ✅ 추가
-        	  	HttpSession session = request.getSession();
-        	    User user = (User) session.getAttribute("user");
+        	  HttpSession session = request.getSession();
+        	    User user = (User) session.getAttribute("loginUser");
 
         	    if (user == null) {
         	        response.sendRedirect("/user/login.do");
         	        return;
         	    }
+
+        	    List<User> userList = userService.getAllUsers(); // ⭕ 정상 작동
+        	 // 적절한 KEY와 IV는 AESUtil 클래스에 이미 정의되어 있음
+        	    String key = "1234567890123456";  // AESUtil.KEY와 동일한 값
+        	    String iv = "abcdefghijklmnop";  // AESUtil.IV와 동일한 값
+
+        	    for (User u : userList) {
+        	        try {
+        	            String decryptedPassword = AESUtil.decrypt(u.getPassword(), key, iv);
+        	            u.setDecryptedPassword(decryptedPassword); // Optional: 필요시
+        	            u.setPassword(decryptedPassword); // UI 출력용
+        	        } catch (Exception e) {
+        	            logger.error("비밀번호 복호화 실패 - 사용자 ID: " + u.getUserId(), e);
+        	            u.setPassword("복호화 실패");
+        	        }
+        	    }
+
+        	    request.setAttribute("userList", userList);
 
         	    try (SqlSession sqlSession = MybatisUtil.getSqlSessionFactory().openSession()) {
         	        UserDAO userDAO = new UserDAO();
@@ -79,7 +99,7 @@ public class UserController extends HttpServlet {
         	        }
 
         	        // 관리자 역할 목록
-        	        Set<String> adminRoles = new HashSet<>(Arrays.asList("admin", "superadmin", "manager", "user"));
+        	        Set<String> adminRoles = new HashSet<>(Arrays.asList("admin", "superadmin", "manager"));
 
         	        if (!adminRoles.contains(role.toLowerCase())) {  
         	            response.sendRedirect("/user/main.do");  // 관리자가 아니면 메인 페이지로 이동
@@ -134,36 +154,39 @@ public class UserController extends HttpServlet {
                 }
                 jsonResponse.put("success", userService.registerUser(user));
                 
-            } else if ("/user/loginCheck.do".equals(path)) { 
-            	
-        		User user = new User();
-        		user.setUserId(request.getParameter("id"));
-                user.setPassword(request.getParameter("pass")); 
-                
-        		boolean loginCheck = userService.validateUser(user);
-        		
-    			//로그인 체크
-    			if(loginCheck) {
-    				//성공시
-    				HttpSession session = request.getSession();
-    				User selectUser = userService.getUserById(user.getUserId());
-    				
-    				session.setAttribute("user", selectUser);
-    				
-    				jsonResponse.put("success", true); // 성공
-    				jsonResponse.put("redirectUrl", "/user/header.do"); // 성공 시 header.jsp로 이동
-    			} else {
-    				//실패시
-    				jsonResponse.put("success", false); // 실패 
-    			}
-        		
+            } else if ("/user/loginCheck.do".equals(path)) {
+                User user = new User();
+                user.setUserId(request.getParameter("id"));
+                user.setPassword(request.getParameter("pass"));
+
+                boolean loginCheck = userService.validateUser(user);
+
+                if (loginCheck) {
+                    HttpSession session = request.getSession();
+                    User selectUser = userService.getUserById(user.getUserId());
+                    session.setAttribute("loginUser", selectUser);
+
+                    // 로그인 전 가려던 페이지로 리다이렉트
+                    String redirectUrl = (String) session.getAttribute("redirectAfterLogin");
+                    if (redirectUrl == null || redirectUrl.isEmpty()) {
+                        redirectUrl = "/user/header.do"; // 기본값
+                    }
+
+                    jsonResponse.put("success", true);
+                    jsonResponse.put("redirectUrl", redirectUrl);
+                    
+                    // 사용 후 세션에서 제거
+                    session.removeAttribute("redirectAfterLogin");
+                } else {
+                    jsonResponse.put("success", false);
+                }
             } else if ("/user/logout.do".equals(path)) { 
             	
-            	HttpSession session = request.getSession(false); // 기존 세션 가져오기 (없으면 null)
+            	HttpSession session = request.getSession(false);
                 if (session != null) {
-                    session.invalidate(); // 세션 무효화
+                    session.invalidate();
                 }
-                jsonResponse.put("success", true); // 성공 응답
+                jsonResponse.put("success", true);
                 
             } else if ("/user/update.do".equals(path)) {
             	HttpSession session = request.getSession();

@@ -1,5 +1,9 @@
 package service.user;
 
+import java.util.List;
+
+import org.apache.ibatis.session.SqlSession;
+
 import exception.HException;
 import model.user.User;
 
@@ -33,4 +37,6 @@ public interface UserService {
     boolean isUserIdDuplicate(String userId); //아이디 중복체크
     
     boolean changePassword(String userId, String currentPassword, String newPassword); // 비밀번호 변경
+    
+    List<User> getAllUsers(); // 이게 있어야 합니다!
 }

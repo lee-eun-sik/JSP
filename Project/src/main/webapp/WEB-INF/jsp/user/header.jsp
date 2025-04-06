@@ -123,9 +123,9 @@
 			</div>
 		</div>
 	</div>
-
+	
 	<c:choose>
-    <c:when test="${empty sessionScope.user}">
+    <c:when test="${empty sessionScope.loginUser}">
         <!-- 로그인하지 않은 상태 -->
         <div class="signInfo">
             <button type="button" name="login" id="login">로그인</button>
@@ -138,11 +138,11 @@
             <p id="userGreeting">
                 안녕하세요, 
                 <c:choose>
-                    <c:when test="${sessionScope.user.role eq 'user'}">
+                    <c:when test="${sessionScope.loginUser.role eq 'admin'}">
                         <a href="/user/manager.do">${sessionScope.user.userId}님!</a>
                     </c:when>
                     <c:otherwise>
-                        <a href="/user/main.do">${sessionScope.user.userId}님!</a>
+                        <a href="/user/main.do">${sessionScope.loginUser.userId}님!</a>
                     </c:otherwise>
                 </c:choose>
             </p>
@@ -208,7 +208,7 @@ $(document).ready(function() {
     });
 	
 	// 로그인 여부 확인 후 버튼 숨기기 및 사용자 인사말 표시
-	var userId = "${sessionScope.user.userId}"; //서버에서 받아온 유저 ID
+	var userId = "${sessionScope.loginUser.userId}"; //서버에서 받아온 유저 ID
 	
 	if (userId) {
 		$("#login, #join").hide(); // 로그인 & 회원가입 버튼 숨기기

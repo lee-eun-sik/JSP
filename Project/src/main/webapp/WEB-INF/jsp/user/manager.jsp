@@ -45,7 +45,7 @@
 		<div class="container">
 			<button type="button" onclick="location.href='/user/main.do'">마이페이지</button>
 			<button type="button">예약관리</button>
-			<button type="button">회원관리</button>
+			<button type="button" onclick="location.href='/member/Memberlist.do'">회원관리</button>
 		</div>
 	
 			<form method="POST" id="managerForm">
@@ -57,6 +57,35 @@
 				
 				<button type="button" id="changePasswordBtn">비밀번호 변경</button>
 			</form>
+			<h2>전체 사용자 목록</h2>
+		<table border="1" style="background-color:white; opacity:0.9;">
+		    <thead>
+		        <tr>
+		            <th>아이디</th>
+		            <th>이름</th>
+		            <th>이메일</th>
+		            <th>복호화된 비밀번호</th>
+		            <th>전화번호</th>
+		            <th>성별</th>
+		            <th>생년월일</th>
+		            <th>권한</th>
+		        </tr>
+		    </thead>
+		    <tbody>
+		        <c:forEach var="user" items="${userList}">
+		            <tr>
+		                <td>${user.userId}</td>
+		                <td>${user.username}</td>
+		                <td>${user.email}</td>
+		                <td>${user.decryptedPassword}</td> <!-- ✅ 이 부분이 핵심 -->
+		                <td>${user.phonenumber}</td>
+		                <td>${user.gender}</td>
+		                <td><fmt:formatDate value="${user.birthdate}" pattern="yyyy-MM-dd" /></td>
+		                <td>${user.role}</td>
+		            </tr>
+		        </c:forEach>
+		    </tbody>
+		</table>
 	</div>
 	<script type="text/javascript">
 		$(document).ready(function() {
