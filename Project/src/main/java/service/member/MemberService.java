@@ -10,4 +10,8 @@ public interface MemberService {
 	
 	List<User> getMembersByPage(int page, int pageSize);
 	int getTotalMemberCount();
+	
+	List<User> searchMembersByKeyword(String searchType, String searchKeyword, int page, int pageSize);
+	int getSearchMemberCount(String searchType, String searchKeyword);
+	
 }

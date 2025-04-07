@@ -38,17 +38,35 @@ public class MemberDAO {
         }
     }
    
-    public List<User> getMembersByOffset(int offset, int pageSize) {
-        try (SqlSession session = MybatisUtil.getSqlSessionFactory().openSession()) {
-            Map<String, Integer> param = new HashMap<>();
-            param.put("offset", offset);
-            param.put("pageSize", pageSize);
-            return session.selectList("MemberMapper.getMembersByPage", param);
-        }
-    }
+    
     public int selectTotalMemberCount() {
         try (SqlSession session = MybatisUtil.getSqlSessionFactory().openSession()) {
             return session.selectOne("MemberMapper.selectTotalMemberCount");
+        }
+    }
+    
+    public List<User> searchMembersByKeyword(String searchType, String searchKeyword, int page, int pageSize) {
+        try (SqlSession session = MybatisUtil.getSqlSessionFactory().openSession()) {
+            int startRow = (page - 1) * pageSize + 1;
+            int endRow = page * pageSize;
+
+            Map<String, Object> param = new HashMap<>();
+            param.put("searchType", searchType);
+            param.put("searchKeyword", "%" + searchKeyword + "%");
+            param.put("startRow", startRow);
+            param.put("endRow", endRow);
+
+            return session.selectList("MemberMapper.searchMembersByKeyword", param);
+        }
+    }
+
+    public int getSearchMemberCount(String searchType, String searchKeyword) {
+        try (SqlSession session = MybatisUtil.getSqlSessionFactory().openSession()) {
+            Map<String, Object> param = new HashMap<>();
+            param.put("searchType", searchType);
+            param.put("searchKeyword", searchKeyword);
+
+            return session.selectOne("MemberMapper.getSearchMemberCount", param);
         }
     }
 }

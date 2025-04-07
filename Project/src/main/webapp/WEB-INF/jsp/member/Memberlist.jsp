@@ -10,39 +10,87 @@
 <title>회원 목록 관리</title>
 <script src="/js/jquery-3.7.1.min.js"></script>
 <style>
-	body {
-        background-image: url('<%= request.getContextPath() %>/images/pet.jpg'); 
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        margin: 0 auto;
-        padding: 0 auto;
-    }
-    
-    .pagination a {
-	    display: inline-block;
-	    padding: 8px 12px;
-	    margin: 2px;
-	    text-decoration: none;
-	    border: 1px solid #ccc;
-	    border-radius: 4px;
-	    color: #333;
-	    font-weight: normal;
-	}
-	
-	.pagination a.active {
-	    background-color: #333;
-	    color: #fff;
-	    font-weight: bold;
-	    pointer-events: none;
-	}
-	
-	.pagination span {
-	    display: inline-block;
-	    padding: 8px 12px;
-	    color: #999;
-	}
-</style>    
+.pagination {
+    text-align: center;
+    margin: 40px 0;
+    font-family: 'Arial', sans-serif;
+}
+
+.pagination a, .pagination span {
+    display: inline-block;
+    padding: 6px 12px;
+    margin: 0 3px;
+    font-size: 14px;
+    text-decoration: none;
+    color: #333;
+    border-radius: 25%;
+    min-width: 32px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination a:hover:not(.active):not(.disabled) {
+    background-color: #ddd;
+}
+
+.pagination a.active {
+    background-color: #000;
+    color: #fff;
+    font-weight: bold;
+    pointer-events: none;
+}
+
+.pagination a.disabled, .pagination span.disabled {
+    color: #ccc;
+    cursor: default;
+    pointer-events: none;
+}
+
+.pagination span {
+    color: #999;
+}
+
+.search-container {
+  position: fixed;
+  bottom: -20px; /* 화면 하단에서 20px 위 */
+  left: 50%; /* 가로 중앙 정렬을 위한 기준점 */
+  transform: translateX(-50%); /* 가로 중앙 정렬 */
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  z-index: 999; /* 다른 요소 위에 보이도록 */
+  background-color: white; /* 선택사항: 배경 흰색 */
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: none; /* 약간의 그림자 효과 */
+  border:none;
+}
+
+.search-box {
+  position: relative;
+}
+
+.search-box input {
+  width: 200px;
+  padding: 8px 30px 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  background-color: #f5f0ff;
+}
+
+.search-box .search-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+</style>
 </head>
 <body>
 <script type="text/javascript">
@@ -93,42 +141,67 @@ $(document).ready(function() {
 			            <button type="button" onclick="deleteUser('${user.userId}')">탈퇴</button>    
 			        </td>
 			    </tr>
-			</c:forEach>							
+			</c:forEach>			
+			<c:if test="${empty userList}">
+			  <tr>
+			    <td colspan="8" style="text-align: center;">검색 결과가 없습니다.</td>
+			  </tr>
+			</c:if>				
 		</tbody>
 		
 
 </table>
-<!-- 페이징 영역 -->
-<div class="pagination" style="text-align: center; margin-top: 30px;">
-    <c:if test="${page > 1}">
-        <a href="?page=${page - 1}">← Previous</a>
-    </c:if>
+<div class="pagination">
 
-    <!-- 시작 페이지 계산 -->
+    <!-- Previous 버튼 -->
+    <c:choose>
+        <c:when test="${page > 1}">
+            <a href="?page=${page - 1}">← Previous</a>
+        </c:when>
+        <c:otherwise>
+            <a class="disabled">← Previous</a>
+        </c:otherwise>
+    </c:choose>
+
+    <!-- 페이지 번호 -->
     <c:set var="startPage" value="${page - 2 < 1 ? 1 : page - 2}" />
     <c:set var="endPage" value="${page + 2 > totalPages ? totalPages : page + 2}" />
 
-    <!-- 첫 페이지 출력 -->
     <c:if test="${startPage > 1}">
         <a href="?page=1">1</a>
-        <span>...</span>
+        <span class="disabled">...</span>
     </c:if>
 
-    <!-- 가운데 페이지들 -->
     <c:forEach begin="${startPage}" end="${endPage}" var="p">
         <a href="?page=${p}" class="${p == page ? 'active' : ''}">${p}</a>
     </c:forEach>
 
-    <!-- 끝 페이지 생략 ... -->
     <c:if test="${endPage < totalPages}">
-        <span>...</span>
+        <span class="disabled">...</span>
         <a href="?page=${totalPages}">${totalPages}</a>
     </c:if>
 
-    <!-- 다음 페이지 -->
-    <c:if test="${page < totalPages}">
-        <a href="?page=${page + 1}">Next →</a>
-    </c:if>
+    <!-- Next 버튼 -->
+    <c:choose>
+        <c:when test="${page < totalPages}">
+            <a href="?page=${page + 1}">Next →</a>
+        </c:when>
+        <c:otherwise>
+            <a class="disabled">Next →</a>
+        </c:otherwise>
+    </c:choose>
+
+</div>
+<div class="search-container">
+  <select id="searchType">
+    <option value="user_id">아이디</option>
+    <option value="user_name">이름</option>
+  </select>
+
+  <div class="search-box">
+    <input type="text" id="searchKeyword" placeholder="검색어 입력">
+    <button onclick="searchMember()" class="search-btn">🔍</button>
+  </div>
 </div>
 <script type="text/javascript">
 	function deleteUser(userId) {
@@ -146,6 +219,18 @@ $(document).ready(function() {
 	            }
 	        });
 	    }
+	}
+	
+	function searchMember() {
+	    const type = $("#searchType").val();
+	    const keyword = $("#searchKeyword").val().trim();
+
+	    if (!keyword) {
+	        alert("검색어를 입력해주세요.");
+	        return;
+	    }
+
+	    location.href = "/member/Memberlist.do?searchType=" + type + "&searchKeyword=" + encodeURIComponent(keyword);
 	}
 </script>
 </body>

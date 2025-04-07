@@ -34,6 +34,7 @@ public class MemberListController extends HttpServlet {
 	 */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String contextPath = request.getContextPath();
+        String path = request.getPathInfo(); // /Memberlist.do 또는 /delete.do 등
         HttpSession session = request.getSession();
         User loginUser = (User) session.getAttribute("loginUser");
 
@@ -44,37 +45,62 @@ public class MemberListController extends HttpServlet {
             return;
         }
 
-        // 페이징 처리
-        int page = 1;
-        int pageSize = 10;
+        if (path == null || path.equals("/") || path.equals("/Memberlist.do")) {
+            // --- 회원 목록 처리 ---
+            int page = 1;
+            int pageSize = 10;
 
-        String pageParam = request.getParameter("page");
-        if (pageParam != null && pageParam.matches("\\d+")) {
-            page = Integer.parseInt(pageParam);
+            String pageParam = request.getParameter("page");
+            if (pageParam != null && pageParam.matches("\\d+")) {
+                page = Integer.parseInt(pageParam);
+            }
+            if (page < 1) page = 1;
+
+            String searchType = request.getParameter("searchType");
+            String searchKeyword = request.getParameter("searchKeyword");
+
+            int totalUsers;
+            List<User> userList;
+
+            if (searchType != null && searchKeyword != null && !searchKeyword.trim().isEmpty()) {
+                // 검색 처리
+                userList = memberService.searchMembersByKeyword(searchType, searchKeyword, page, pageSize);
+                totalUsers = memberService.getSearchMemberCount(searchType, searchKeyword);
+            } else {
+                // 전체 조회
+                totalUsers = memberService.getTotalMemberCount();
+                userList = memberService.getMembersByPage(page, pageSize);
+            }
+
+            int totalPages = (int) Math.ceil((double) totalUsers / pageSize);
+            if (page > totalPages) page = totalPages;
+            userList = memberService.getMembersByPage(page, pageSize);
+            request.setAttribute("userList", userList);
+            request.setAttribute("page", page);
+            request.setAttribute("totalPages", totalPages);
+
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/member/Memberlist.jsp");
+            dispatcher.forward(request, response);
+        } else {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND); // 404 처리
         }
-        if (page < 1) page = 1;
-
-        int totalUsers = memberService.getTotalMemberCount();
-        int totalPages = (int) Math.ceil((double) totalUsers / pageSize);
-        if (page > totalPages) page = totalPages;
-
-        
-        List<User> userList = memberService.getMembersByPage(page, pageSize);
-
-        request.setAttribute("userList", userList);
-        request.setAttribute("page", page);
-        request.setAttribute("totalPages", totalPages);
-
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/member/Memberlist.jsp");
-        dispatcher.forward(request, response);
     }
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
-	}
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String path = request.getPathInfo();
+
+        if ("/delete.do".equals(path)) {
+            String userId = request.getParameter("userId");
+            boolean result = memberService.deleteMember(userId);
+            response.setContentType("application/json;charset=UTF-8");
+            response.getWriter().write("{\"success\":" + result + "}");
+        } else {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        }
+    }
 
 }
