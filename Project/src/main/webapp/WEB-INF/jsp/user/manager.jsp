@@ -9,14 +9,7 @@
 <script src="/js/jquery-3.7.1.min.js"></script>
 <script src="/js/logout.js"></script>
 <style>
-	body {
-        background-image: url('<%= request.getContextPath() %>/images/pet.jpg'); /* 배경 이미지 */
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        margin: 0 auto;
-        padding: 0 auto;
-    }
+	
     
     /* 로그인 정보 표시를 오른쪽 상단에 배치 */
     .signInfo {
@@ -43,7 +36,7 @@
 	<div class="manager-container">
 		<h1>관리자 페이지</h1>
 		<div class="container">
-			<button type="button" onclick="location.href='/user/main.do'">마이페이지</button>
+			<button type="button" onclick="location.href='/user/main.do?form=show'">마이페이지</button>
 			<button type="button">예약관리</button>
 			<button type="button" onclick="location.href='/member/Memberlist.do'">회원관리</button>
 		</div>
@@ -57,35 +50,6 @@
 				
 				<button type="button" id="changePasswordBtn">비밀번호 변경</button>
 			</form>
-			<h2>전체 사용자 목록</h2>
-		<table border="1" style="background-color:white; opacity:0.9;">
-		    <thead>
-		        <tr>
-		            <th>아이디</th>
-		            <th>이름</th>
-		            <th>이메일</th>
-		            <th>복호화된 비밀번호</th>
-		            <th>전화번호</th>
-		            <th>성별</th>
-		            <th>생년월일</th>
-		            <th>권한</th>
-		        </tr>
-		    </thead>
-		    <tbody>
-		        <c:forEach var="user" items="${userList}">
-		            <tr>
-		                <td>${user.userId}</td>
-		                <td>${user.username}</td>
-		                <td>${user.email}</td>
-		                <td>${user.decryptedPassword}</td> <!-- ✅ 이 부분이 핵심 -->
-		                <td>${user.phonenumber}</td>
-		                <td>${user.gender}</td>
-		                <td><fmt:formatDate value="${user.birthdate}" pattern="yyyy-MM-dd" /></td>
-		                <td>${user.role}</td>
-		            </tr>
-		        </c:forEach>
-		    </tbody>
-		</table>
 	</div>
 	<script type="text/javascript">
 		$(document).ready(function() {

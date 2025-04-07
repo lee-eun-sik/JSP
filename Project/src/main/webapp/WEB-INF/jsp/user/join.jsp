@@ -9,12 +9,11 @@
 <meta charset="UTF-8">
 <title>회원가입</title>
 <script src="/js/jquery-3.7.1.min.js"></script>
-<script src="/js/common.js"></script>
-<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="/js/jquery-ui-1.14.1.custom/jquery-ui-1.14.1.custom/jquery-ui.min.css">
+<script src="/js/jquery-ui-1.14.1.custom/jquery-ui-1.14.1.custom/jquery-ui.min.js"></script>
 <style>
 body {
-        background-image: url('<%= request.getContextPath() %>/images/background.jpg'); /* 배경 이미지 */
+        background-image: url('<%= request.getContextPath() %>/images/pet.jpg'); 
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -127,7 +126,7 @@ body {
 														alert("회원가입 실패하셨습니다.");
 													}
 												});
-		})
+		});
 		});
 	
 </script>
@@ -175,7 +174,9 @@ $(document).ready(function() {
         changeYear: true,
         yearRange: "1900:2025"
     });
+    console.log(typeof $.datepicker);
 });
 </script>				
 </body>
+<script src="/js/common.js"></script>
 </html>

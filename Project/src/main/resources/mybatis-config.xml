@@ -17,7 +17,7 @@
                 <!--<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"/>  DB URL -->
                 <property name="driver" value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy"/> <!--Oracle JDBC 드라이버 -->
                 <property name="url" value="jdbc:log4jdbc:oracle:thin:@//localhost:1521/xe"/> <!--DB URL -->
-                <property name="username" value="leeeunsik"/> <!-- DB 사용자명 -->
+                <property name="username" value="eunsik"/> <!-- DB 사용자명 -->
                 <property name="password" value="1234"/> <!-- DB 비밀번호 -->
             </dataSource>
         </environment>
@@ -29,5 +29,6 @@
         <mapper resource="mapper/UserMapper.xml"/> <!-- 사용자 매퍼 파일 -->
         <mapper resource="mapper/BoardMapper.xml"/> <!--마이바티스에서 매퍼읽기 가능-->
         <mapper resource="mapper/FileMapper.xml"/>
+        <mapper resource="mapper/MemberMapper.xml"/>
     </mappers>
 </configuration>

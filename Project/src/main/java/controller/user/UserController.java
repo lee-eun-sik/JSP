@@ -24,7 +24,6 @@ import jakarta.servlet.http.HttpSession;
 import model.user.User;
 import service.user.UserService;
 import service.user.UserServiceImpl;
-import util.AESUtil;
 import util.MybatisUtil;
 
 
@@ -62,8 +61,8 @@ public class UserController extends HttpServlet {
 	            request.getRequestDispatcher("/WEB-INF/jsp/user/userInfo.jsp").forward(request, response);
 	      } else if("/user/header.do".equals(path)) {
           	request.getRequestDispatcher("/WEB-INF/jsp/user/header.jsp").forward(request, response);    	
-          } else if ("/user/manager.do".equals(path)) {  // ✅ 추가
-        	  HttpSession session = request.getSession();
+          } else if ("/user/manager.do".equals(path)) {
+        	    HttpSession session = request.getSession();
         	    User user = (User) session.getAttribute("loginUser");
 
         	    if (user == null) {
@@ -71,20 +70,11 @@ public class UserController extends HttpServlet {
         	        return;
         	    }
 
-        	    List<User> userList = userService.getAllUsers(); // ⭕ 정상 작동
-        	 // 적절한 KEY와 IV는 AESUtil 클래스에 이미 정의되어 있음
-        	    String key = "1234567890123456";  // AESUtil.KEY와 동일한 값
-        	    String iv = "abcdefghijklmnop";  // AESUtil.IV와 동일한 값
+        	    List<User> userList = userService.getAllUsers();
 
         	    for (User u : userList) {
-        	        try {
-        	            String decryptedPassword = AESUtil.decrypt(u.getPassword(), key, iv);
-        	            u.setDecryptedPassword(decryptedPassword); // Optional: 필요시
-        	            u.setPassword(decryptedPassword); // UI 출력용
-        	        } catch (Exception e) {
-        	            logger.error("비밀번호 복호화 실패 - 사용자 ID: " + u.getUserId(), e);
-        	            u.setPassword("복호화 실패");
-        	        }
+        	        // 복호화하지 않고 그냥 마스킹 처리
+        	        u.setPassword("****");
         	    }
 
         	    request.setAttribute("userList", userList);
@@ -93,28 +83,24 @@ public class UserController extends HttpServlet {
         	        UserDAO userDAO = new UserDAO();
         	        String role = userDAO.getUserRoleById(sqlSession, user.getUserId());
 
-        	        // 역할이 null이면 기본값을 'guest'로 설정
         	        if (role == null) {
         	            role = "guest";
         	        }
 
-        	        // 관리자 역할 목록
         	        Set<String> adminRoles = new HashSet<>(Arrays.asList("admin", "superadmin", "manager"));
 
-        	        if (!adminRoles.contains(role.toLowerCase())) {  
-        	            response.sendRedirect("/user/main.do");  // 관리자가 아니면 메인 페이지로 이동
+        	        if (!adminRoles.contains(role.toLowerCase())) {
+        	            response.sendRedirect("/user/main.do");
         	            return;
         	        }
 
-        	        // ✅ forward()를 try 블록 내부에서 실행해야 에러 없음
         	        request.getRequestDispatcher("/WEB-INF/jsp/user/manager.jsp").forward(request, response);
 
         	    } catch (Exception e) {
         	        logger.error("Error in /user/manager.do", e);
-        	        response.sendRedirect("/error.do"); // 에러 발생 시 에러 페이지로 리디렉트
+        	        response.sendRedirect("/error.do");
         	    }
-        	    
-          }
+        	}
 	}
 
 	/**

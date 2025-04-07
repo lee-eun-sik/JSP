@@ -10,6 +10,14 @@
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 <style>
+	body {
+         
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        margin: 0 auto;
+        padding: 0 auto;
+    }
 	#mypage-container {
 		position: relative;
         text-align: center;
@@ -92,8 +100,9 @@
 </style>
 </head>
 <body>
+<jsp:include page="header.jsp" />
 <c:choose>
-    <c:when test="${not empty sessionScope.user}">
+    <c:when test="${not empty sessionScope.loginUser}">
         <div id="mypage-container">
             <h1 id="mypage">마이페이지</h1>
             <div id="container">
@@ -101,7 +110,7 @@
                 <button type="button">예약내역</button>
             </div>
             <form method="post" id="logoutForm">
-                <p><strong>${sessionScope.user.userId}</strong>님 안녕하세요.</p>
+                <p><strong>${sessionScope.loginUser.userId}</strong>님 안녕하세요.</p>
 
                 <table id="logoutTable">
                     <tr>
@@ -135,5 +144,12 @@
         <p>로그인이 필요합니다. <a href="/user/login.do">로그인 페이지로 이동</a></p>
     </c:otherwise>
 </c:choose>		
+
+<script type="text/javascript">
+$(document).ready(function() {
+	$("#background").hide(); // 헤더 배경 사진 숨기기
+	
+});
+</script>
 </body>
 </html>

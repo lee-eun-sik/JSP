@@ -10,14 +10,38 @@
 <title>회원 목록 관리</title>
 <script src="/js/jquery-3.7.1.min.js"></script>
 <style>
-body {
-        background-image: url('<%= request.getContextPath() %>/images/pet.jpg'); /* 배경 이미지 */
+	body {
+        background-image: url('<%= request.getContextPath() %>/images/pet.jpg'); 
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
         margin: 0 auto;
         padding: 0 auto;
     }
+    
+    .pagination a {
+	    display: inline-block;
+	    padding: 8px 12px;
+	    margin: 2px;
+	    text-decoration: none;
+	    border: 1px solid #ccc;
+	    border-radius: 4px;
+	    color: #333;
+	    font-weight: normal;
+	}
+	
+	.pagination a.active {
+	    background-color: #333;
+	    color: #fff;
+	    font-weight: bold;
+	    pointer-events: none;
+	}
+	
+	.pagination span {
+	    display: inline-block;
+	    padding: 8px 12px;
+	    color: #999;
+	}
 </style>    
 </head>
 <body>
@@ -57,7 +81,7 @@ $(document).ready(function() {
 			        <td>${user.username}</td>
 			        <td>${user.gender}</td>
 			        <td>${user.userId}</td>
-			        <td>${user.decryptedPassword}</td>
+			        <td>****</td>
 			        <td>${user.phonenumber}</td>
 			        <td>${user.email}</td>
 			        <td>
@@ -66,24 +90,63 @@ $(document).ready(function() {
 					  </c:if>
 					</td>
 			        <td>
-			            <button type="button">탈퇴</button>    
+			            <button type="button" onclick="deleteUser('${user.userId}')">탈퇴</button>    
 			        </td>
 			    </tr>
 			</c:forEach>							
 		</tbody>
 		
-<!-- 페이지네이션 예시 -->
-<div class="pagination">
+
+</table>
+<!-- 페이징 영역 -->
+<div class="pagination" style="text-align: center; margin-top: 30px;">
     <c:if test="${page > 1}">
-        <a href="?page=${page - 1}">Previous</a>
+        <a href="?page=${page - 1}">← Previous</a>
     </c:if>
-    <c:forEach begin="1" end="${totalPages}" var="p">
+
+    <!-- 시작 페이지 계산 -->
+    <c:set var="startPage" value="${page - 2 < 1 ? 1 : page - 2}" />
+    <c:set var="endPage" value="${page + 2 > totalPages ? totalPages : page + 2}" />
+
+    <!-- 첫 페이지 출력 -->
+    <c:if test="${startPage > 1}">
+        <a href="?page=1">1</a>
+        <span>...</span>
+    </c:if>
+
+    <!-- 가운데 페이지들 -->
+    <c:forEach begin="${startPage}" end="${endPage}" var="p">
         <a href="?page=${p}" class="${p == page ? 'active' : ''}">${p}</a>
     </c:forEach>
-    <c:if test="${page < totalPages}">
-        <a href="?page=${page + 1}">Next</a>
+
+    <!-- 끝 페이지 생략 ... -->
+    <c:if test="${endPage < totalPages}">
+        <span>...</span>
+        <a href="?page=${totalPages}">${totalPages}</a>
     </c:if>
-</div>				
-</table>
+
+    <!-- 다음 페이지 -->
+    <c:if test="${page < totalPages}">
+        <a href="?page=${page + 1}">Next →</a>
+    </c:if>
+</div>
+<script type="text/javascript">
+	function deleteUser(userId) {
+	    if (confirm(userId + " 회원을 정말 탈퇴하시겠습니까?")) {
+	        $.ajax({
+	            url: "/member/delete.do",
+	            method: "POST",
+	            data: { userId: userId },
+	            success: function(response) {
+	                alert("회원이 성공적으로 탈퇴되었습니다.");
+	                location.reload(); // 페이지 새로고침
+	            },
+	            error: function() {
+	                alert("회원 탈퇴 중 오류가 발생했습니다.");
+	            }
+	        });
+	    }
+	}
+</script>
 </body>
 </html>

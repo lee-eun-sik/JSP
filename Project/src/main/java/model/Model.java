@@ -7,7 +7,7 @@ public class Model {
 	public String createId; // 계정 생성자 ID
 	public String updateId; // 계정 수정자 ID
 	public Date createDt; // 생성일
-	public String updateDt; // 수정일
+	public Date updateDt; // 수정일
 	
 
 	public Model() {
@@ -38,11 +38,11 @@ public class Model {
 		this.createDt = createDt;
 	}
 
-	public String getUpdateDt() {
+	public Date getUpdateDt() {
 		return updateDt;
 	}
 
-	public void setUpdateDt(String updateDt) {
+	public void setUpdateDt(Date updateDt) {
 		this.updateDt = updateDt;
 	}
 

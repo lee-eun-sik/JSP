@@ -20,45 +20,48 @@
     <!-- 사용자 ID로 사용자 정보 조회 -->
     <select id="getUserById" resultMap="userResultMap" parameterType="string">
 	    SELECT USER_ID, 
-	    			USERNAME, 
-	    			PASSWORD, 
-	    			EMAIL, 
-	    			CREATE_ID, 
-	    			UPDATE_ID, 
-	    			CREATE_DT, 
-	    			UPDATE_DT, 
-	    			ROLE
+	   		   USERNAME, 
+	   		   PASSWORD, 
+	   		   EMAIL, 
+	   		   CREATE_ID, 
+	   		   UPDATE_ID, 
+	   		   CREATE_DT, 
+	   		   UPDATE_DT, 
+	   		   ROLE
 	    FROM USERS
 	    WHERE USER_ID = #{userId}
 	      AND DEL_YN = 'N'
 	</select>
 
     <!-- 사용자 생성 -->
-<insert id="registerUser" parameterType="model.user.User">
-    INSERT INTO USERS (
-        USER_ID, 
-        USERNAME, 
-        PASSWORD,
-        EMAIL,
-        CREATE_ID,
-        PHONENUMBER,
-        GENDER,
-        BIRTH_DATE,
-        CREATE_DT,
-        ROLE
-    ) VALUES (
-        #{userId}, 
-        #{username}, 
-        #{password},
-        #{email},
-        #{createId},
-        #{phonenumber},
-        #{gender},
-        #{birthdate, jdbcType=DATE},
-        SYSDATE,
-        #{role}
-    )
-</insert>
+
+    <insert id="registerUser" parameterType="model.user.User">
+	    INSERT INTO USERS (
+	        USER_ID, 
+	        USERNAME, 
+	        PASSWORD,
+	        EMAIL,
+	        CREATE_ID,
+	        PHONENUMBER,
+	        GENDER,
+	        BIRTH_DATE,
+	        CREATE_DT,
+	        ROLE,
+	        DEL_YN
+	    ) VALUES (
+	        #{userId}, 
+	        #{username}, 
+	        #{password},
+	        #{email},
+	        #{createId},
+	        #{phonenumber},
+	        #{gender},
+	        #{birthdate, jdbcType=DATE},
+	        SYSDATE,
+	        #{role},
+	        'N'
+	    )
+	</insert>
 <update id="updateUser" parameterType="model.user.User">
     UPDATE USERS 
     SET 

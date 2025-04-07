@@ -1,76 +1,31 @@
 package model.user;
-
 import java.util.Date;
 
 import model.Model;
 
 public class User extends Model {
-	private String userId; //사용자 ID(Primary Key)
-	private String username; //사용자 이름
-	private String password; //비밀번호 (암호화 저장됨)
-	private String email;	//이메일
-	private String password_confirm; //비밀번호 확인
-	private String gender; //성별
-	private String phonenumber; //전화번호
-	private Date birthdate;
-	private Date createDt;
-	private String role; // 역할 필드 추가 (관리자, 일반 사용자 구분)
-	private String decryptedPassword;
+	private String userId;
+    private String username;
+    private String password;
+    private String email;
+    private String createId;
+    private String updateId;
+    private Date createDt;
+    private Date updateDt;
+    private String delYn;
+    private String password_confirm;
+    private String phonenumber;
+    private String gender;
+    private Date birthdate;
+    private String role;
+    // Getters/Setters
+	
 	//기본 생성자
 	
 	public User() {
 		
 	}
-	
 
-
-	public Date getCreateDt() {
-		return createDt;
-	}
-
-
-
-	public void setCreateDt(Date createDt) {
-		this.createDt = createDt;
-	}
-
-
-
-	public String getPassword_confirm() {
-		return password_confirm;
-	}
-
-	public void setPassword_confirm(String password_confirm) {
-		this.password_confirm = password_confirm;
-	}
-
-	public String getGender() {
-		return gender;
-	}
-
-	public void setGender(String gender) {
-		this.gender = gender;
-	}
-
-	
-
-	public String getPhonenumber() {
-		return phonenumber;
-	}
-
-	public void setPhonenumber(String phonenumber) {
-		this.phonenumber = phonenumber;
-	}
-
-	public Date getBirthdate() {
-		return birthdate;
-	}
-
-	public void setBirthdate(Date birthdate) {
-		this.birthdate = birthdate;
-	}
-
-	//모든 필드를 포함하는 생성자
 	public String getUserId() {
 		return userId;
 	}
@@ -111,6 +66,8 @@ public class User extends Model {
 		this.createId = createId;
 	}
 
+	
+
 	public String getUpdateId() {
 		return updateId;
 	}
@@ -119,12 +76,52 @@ public class User extends Model {
 		this.updateId = updateId;
 	}
 
-	public String getUpdateDt() {
+	public Date getCreateDt() {
+		return createDt;
+	}
+
+	public void setCreateDt(Date createDt) {
+		this.createDt = createDt;
+	}
+
+	public Date getUpdateDt() {
 		return updateDt;
 	}
 
-	public void setUpdateDt(String updateDt) {
+	public void setUpdateDt(Date updateDt) {
 		this.updateDt = updateDt;
+	}
+
+	public String getDelYn() {
+		return delYn;
+	}
+
+	public void setDelYn(String delYn) {
+		this.delYn = delYn;
+	}
+
+	public String getPhonenumber() {
+		return phonenumber;
+	}
+
+	public void setPhonenumber(String phonenumber) {
+		this.phonenumber = phonenumber;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	public Date getBirthdate() {
+		return birthdate;
+	}
+
+	public void setBirthdate(Date birthdate) {
+		this.birthdate = birthdate;
 	}
 
 	public String getRole() {
@@ -135,13 +132,18 @@ public class User extends Model {
 		this.role = role;
 	}
 
+	public String getPassword_confirm() {
+		return password_confirm;
+	}
+
+	public void setPassword_confirm(String password_confirm) {
+		this.password_confirm = password_confirm;
+	}
+
+	
+	
 	
 
-	public String getDecryptedPassword() {
-	    return decryptedPassword;
-	}
 
-	public void setDecryptedPassword(String decryptedPassword) {
-	    this.decryptedPassword = decryptedPassword;
-	}
+
 }

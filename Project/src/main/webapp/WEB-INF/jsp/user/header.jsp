@@ -139,7 +139,7 @@
                 안녕하세요, 
                 <c:choose>
                     <c:when test="${sessionScope.loginUser.role eq 'admin'}">
-                        <a href="/user/manager.do">${sessionScope.user.userId}님!</a>
+                        <a href="/user/manager.do">${sessionScope.loginUser.userId}님!</a>
                     </c:when>
                     <c:otherwise>
                         <a href="/user/main.do">${sessionScope.loginUser.userId}님!</a>
