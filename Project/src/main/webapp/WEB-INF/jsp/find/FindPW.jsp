@@ -9,7 +9,6 @@
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 <style>
-<style>
 body {
         background-image: url('<%= request.getContextPath() %>/images/pet.jpg'); 
         background-size: cover;
@@ -19,7 +18,7 @@ body {
 </style>
 </head>
 <body>
-<jsp:include page="/WEB-INF/jsp/user/header.jsp" />
+<jsp:include page="/WEB-INF/jsp/user/header.jsp"></jsp:include>
 <script type="text/javascript">
 $(document).ready(function () {
 	 $("#background").hide(); // 헤더 배경 사진 숨기기
@@ -30,7 +29,7 @@ $(document).ready(function () {
 });
 </script>
 
-<form method="POST"  id="FindPWForm" action="/user/findPw.do">
+<form method="GET"  id="FindPWForm" action="/user/findPw.do">
 						<h1>비밀번호 찾기</h1>
 						<table id="pwFindTable">
 							<tr>
@@ -55,8 +54,10 @@ $(document).ready(function () {
 		                    </tr>
 		                </table>
 						<div class="button-group">
-		                    <button type="button">아이디찾기</button>
-		                    <button type="button">취소</button>
+		                    <div class="button-group">
+							    <button type="button" onclick="location.href='/user/findId.do'">아이디찾기</button>
+							    <button type="button" onclick="history.back();">취소</button>
+							</div>
 		                </div>
 			</form>
 </body>

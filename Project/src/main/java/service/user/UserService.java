@@ -47,5 +47,5 @@ public interface UserService {
  // 비밀번호 초기화를 위한 사용자 정보 확인
     User findUserForPasswordReset(User user);
     
-    public User findUserIdByInfo(String name, String phone, String email, Date birthdate);
+    User findUserByInfo(String name, String phone, String email, Date birthdate);
 }

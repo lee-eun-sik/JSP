@@ -13,22 +13,27 @@
     <result property="createDt" column="CREATE_DT"/>
     <result property="updateDt" column="UPDATE_DT"/>
     <result property="role" column="ROLE"/>
-    <result property="gender" column="GENDER"/>        <!-- 성별이 있다면 -->
-    <result property="phonenumber" column="PHONENUMBER"/> <!-- 전화번호가 있다면 -->
+    <result property="gender" column="GENDER"/>        
+    <result property="phonenumber" column="PHONENUMBER"/> 
+    <result property="birthdate" column="BIRTH_DATE"/>
+    <result property="delYn" column="DEL_YN"/>
 </resultMap>
 
     <!-- 사용자 ID로 사용자 정보 조회 -->
     <select id="getUserById" resultMap="userResultMap" parameterType="string">
 	    SELECT USER_ID, 
-	   		   USERNAME, 
-	   		   PASSWORD, 
-	   		   EMAIL, 
-	   		   CREATE_ID, 
-	   		   UPDATE_ID, 
-	   		   CREATE_DT, 
-	   		   UPDATE_DT, 
-	   		   ROLE
-	    FROM USERS
+		       USERNAME, 
+		       PASSWORD, 
+		       EMAIL, 
+		       PHONENUMBER,
+		       GENDER,
+		       BIRTH_DATE,
+		       CREATE_ID, 
+		       UPDATE_ID, 
+		       CREATE_DT, 
+		       UPDATE_DT, 
+		       ROLE
+		FROM USERS
 	    WHERE USER_ID = #{userId}
 	      AND DEL_YN = 'N'
 	</select>
@@ -62,31 +67,22 @@
 	        'N'
 	    )
 	</insert>
-<update id="updateUser" parameterType="model.user.User">
-    UPDATE USERS 
-    SET 
-        PHONENUMBER = CASE WHEN #{phonenumber} IS NOT NULL THEN #{phonenumber} ELSE PHONENUMBER END, 
-        EMAIL = CASE WHEN #{email} IS NOT NULL THEN #{email} ELSE EMAIL END, 
-        BIRTH_DATE = CASE WHEN #{birthdate} IS NOT NULL THEN #{birthdate} ELSE BIRTH_DATE END,
-        UPDATE_DT = SYSDATE
-    WHERE USER_ID = #{userId}
-</update>
+
 
     <!-- 사용자 삭제 (논리 삭제) -->
-    <update id="deleteUser" parameterType="model.user.User">
-        UPDATE USERS 
-        SET DEL_YN = 'Y',  
-            UPDATE_ID = CASE WHEN #{updateId} IS NOT NULL THEN #{updateId} ELSE UPDATE_ID END,  
-            UPDATE_DT = SYSDATE  
-        WHERE USER_ID = #{userId} AND DEL_YN = 'N'
-    </update>
+    <update id="deleteUser" parameterType="string">
+	    UPDATE USERS 
+	    SET DEL_YN = 'Y',  
+	        UPDATE_DT = SYSDATE  
+	    WHERE USER_ID = #{userId} AND DEL_YN = 'N'
+	</update>
 	
-	<!-- 아이디 중복 체크 -->
-	<select id="checkUserIdDuplicate" parameterType="model.user.User" resultType="int">
-		SELECT 
-			COUNT(*) 
-		FROM USERS
-		WHERE USER_ID = #{userId} 
+	<select id="checkUserIdDuplicate" parameterType="String" resultType="int">
+	    SELECT 
+	        COUNT(*) 
+	    FROM USERS
+	    WHERE USER_ID = #{userId}
+	      AND DEL_YN = 'N'
 	</select>
 	
 	<update id="updatePassword" parameterType="model.user.User">
@@ -103,48 +99,42 @@
 	
 	<select id="getAllUsers" resultMap="userResultMap">
 	   SELECT 
-	       USER_ID,
-	       USERNAME,
-	       PASSWORD,
-	       EMAIL,
-	       PHONENUMBER,
-	       GENDER,
-	       CREATE_ID,
-	       UPDATE_ID,
-	       CREATE_DT,
-	       UPDATE_DT,
-	       ROLE
+		   USER_ID,
+		   USERNAME,
+		   PASSWORD,
+		   EMAIL,
+		   PHONENUMBER,
+		   GENDER,
+		   CREATE_ID,
+		   UPDATE_ID,
+		   CREATE_DT,
+		   UPDATE_DT,
+		   ROLE,
+		   BIRTH_DATE,
+		   DEL_YN
 	   FROM USERS
 	   WHERE DEL_YN = 'N'
 	</select>
 	
-	<!-- 사용자 아이디 찾기 -->
-	<select id="findUserId" resultType="string" parameterType="map">
-	    SELECT USER_ID
-	    FROM USERS
-	    WHERE USERNAME = #{name}
-	      AND PHONENUMBER = #{phone}
-	      AND EMAIL = #{email}
-	      AND BIRTHDATE = #{birthdate}
-	      AND DEL_YN = 'N'
-	</select>
-	
-	<!-- 비밀번호 초기화를 위한 사용자 정보 확인 -->
-	<select id="findUserForPasswordReset" resultType="model.user.User" parameterType="map">
-	    SELECT USER_ID, USERNAME, PHONENUMBER, EMAIL, BIRTHDATE, PASSWORD, DEL_YN
-	    FROM USERS 
-	    WHERE USER_ID = #{userId}
-	      AND USERNAME = #{name}
-	      AND PHONENUMBER = #{phone}
-	      AND EMAIL = #{email}
-	      AND BIRTHDATE = #{birthdate}
-	</select>
-	
-	<select id="findUserIdByInfo" parameterType="map" resultType="model.user.User">
-	    SELECT * FROM users
-	    WHERE name = #{name}
-	      AND phone = #{phone}
-	      AND email = #{email}
-	      AND birthdate = #{birthdate}
-	</select>
+	<!-- 사용자 아이디만 찾기 -->
+<select id="findUserId" resultType="java.lang.String" parameterType="model.user.User">
+    SELECT USER_ID
+    FROM USERS
+    WHERE USERNAME = #{username}
+      AND PHONENUMBER = #{phonenumber}
+      AND EMAIL = #{email}
+      AND BIRTH_DATE = #{birthdate}
+      AND DEL_YN = 'N'
+</select>
+
+<!-- 사용자 전체 정보 찾기 -->
+<select id="findUserIdByInfo" parameterType="map" resultMap="userResultMap">
+    SELECT * 
+    FROM USERS
+    WHERE USERNAME = #{username}
+      AND PHONENUMBER = #{phonenumber}
+      AND EMAIL = #{email}
+      AND BIRTH_DATE = #{birthdate}
+      AND DEL_YN = 'N'
+</select>
 </mapper>

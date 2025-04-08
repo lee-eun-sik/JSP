@@ -61,10 +61,6 @@ public class UserController extends HttpServlet {
 	            request.getRequestDispatcher("/WEB-INF/jsp/user/userInfo.jsp").forward(request, response);
 	      } else if("/user/header.do".equals(path)) {
           	request.getRequestDispatcher("/WEB-INF/jsp/user/header.jsp").forward(request, response);    	
-          } else if ("/user/findId.do".equals(path)) {
-              request.getRequestDispatcher("/WEB-INF/jsp/user/FindID.jsp").forward(request, response);
-          } else if ("/user/findPw.do".equals(path)) {
-              request.getRequestDispatcher("/WEB-INF/jsp/user/FindPW.jsp").forward(request, response);
           } else if ("/user/manager.do".equals(path)) {
         	    HttpSession session = request.getSession();
         	    User user = (User) session.getAttribute("loginUser");
@@ -263,75 +259,7 @@ public class UserController extends HttpServlet {
                         jsonResponse.put("message", "현재 비밀번호가 일치하지 않습니다.");
                     }
                 }
-            } else if ("/user/findId.do".equals(path)) {
-                String name = request.getParameter("name");
-                String phone = request.getParameter("phone");
-                String email = request.getParameter("email");
-                String birthdateStr = request.getParameter("birthdate");
-
-                try {
-                    SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-                    Date birthdate = sdf.parse(birthdateStr);
-
-                    User user = userService.findUserIdByInfo(name, phone, email, birthdate);
-
-                    if (user != null) {
-                        jsonResponse.put("success", true);
-                        jsonResponse.put("userId", user.getUserId());
-                    } else {
-                        jsonResponse.put("success", false);
-                    }
-                } catch (Exception e) {
-                    logger.error("아이디 찾기 오류 발생", e);
-                    jsonResponse.put("success", false);
-                    jsonResponse.put("message", "오류가 발생했습니다.");
-                }
-
-                out.print(jsonResponse.toString());
-                out.flush();
-            } else if ("/user/findPw.do".equals(path)) {
-                String userId = request.getParameter("id");
-                String name = request.getParameter("name");
-                String phone = request.getParameter("phone");
-                String email = request.getParameter("email");
-                String birthdateStr = request.getParameter("birthdate");
-
-                SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-                Date birthdate = null;
-                try {
-                    birthdate = sdf.parse(birthdateStr);
-                } catch (Exception e) {
-                    jsonResponse.put("success", false);
-                    jsonResponse.put("message", "생년월일 형식이 올바르지 않습니다.");
-                    out.print(jsonResponse.toString());
-                    out.flush();
-                    return;
-                }
-
-                User user = new User();
-                user.setUserId(userId);
-                user.setUsername(name);
-                user.setPhonenumber(phone);
-                user.setEmail(email);
-                user.setBirthdate(birthdate);
-
-                // DB에서 해당 사용자 찾기
-                User foundUser = userService.findUserForPasswordReset(user);
-
-                if (foundUser != null) {
-                    // 비밀번호 찾기 성공 (임시 비밀번호 발급 등 구현 가능)
-                    jsonResponse.put("success", true);
-                    jsonResponse.put("message", "사용자 확인 완료. 비밀번호 재설정 가능합니다.");
-                    // 또는 임시 비밀번호 생성 후 사용자 이메일로 전송 기능도 구현 가능
-                    jsonResponse.put("password", foundUser.getPassword()); // (복호화된 비밀번호 제공 시)
-                } else {
-                    jsonResponse.put("success", false);
-                    jsonResponse.put("message", "입력하신 정보와 일치하는 사용자가 없습니다.");
-                }
-
-                out.print(jsonResponse.toString());
-                out.flush();
-            }
+            } 
          
         } catch (Exception e) {
             jsonResponse.put("success", false); // 오류 발생 시

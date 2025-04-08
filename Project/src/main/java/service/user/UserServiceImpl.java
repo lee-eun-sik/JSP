@@ -99,16 +99,15 @@ public class UserServiceImpl implements UserService {// 보안때문, 인터페�
 		}
 	}
 	 
-	@Override
+	@Override 
 	public boolean isUserIdDuplicate(String userId) {
-		try (SqlSession session = sqlSessionFactory.openSession()) {
-			return userDAO.isUserIdDuplicate(session, userId);
-		} catch (Exception e) {
-			logger.error("Error in isUserIdDuplicate: ", e);
-			return false;
-		}
+	    try (SqlSession session = sqlSessionFactory.openSession()) {
+	        return userDAO.isUserIdDuplicate(session, userId); // 메서드명 일치
+	    } catch (Exception e) {
+	        logger.error("Error in isUserIdDuplicate: ", e);
+	        return false;
+	    }
 	}
-	
 	@Override
 	public boolean changePassword(String userId, String currentPassword, String newPassword) {
 	    try (SqlSession session = sqlSessionFactory.openSession()) {
@@ -148,7 +147,7 @@ public class UserServiceImpl implements UserService {// 보안때문, 인터페�
 	@Override
 	public List<User> getAllUsers() {
 	    try (SqlSession session = sqlSessionFactory.openSession()) {
-	        return session.selectList(NAMESPACE + ".getAllUsers");
+	        return userDAO.getAllUsers(session);
 	    } catch (Exception e) {
 	        logger.error("Error in getAllUsers: ", e);
 	        return new ArrayList<>();
@@ -158,9 +157,15 @@ public class UserServiceImpl implements UserService {// 보안때문, 인터페�
 	@Override
 	public String findUserId(String name, String phone, String email, Date birthdate) {
 	    try (SqlSession session = sqlSessionFactory.openSession()) {
-	        return userDAO.findUserId(session, name, phone, email, birthdate);
+	        User user = new User();
+	        user.setUsername(name);
+	        user.setPhonenumber(phone);
+	        user.setEmail(email);
+	        user.setBirthdate(birthdate);
+	        
+	        return userDAO.findUserId(session, user); // DAO 메서드 호출
 	    } catch (Exception e) {
-	        logger.error("Error in findUserId: ", e);
+	        logger.error("Error in findUserId", e);
 	        return null;
 	    }
 	}
@@ -176,13 +181,13 @@ public class UserServiceImpl implements UserService {// 보안때문, 인터페�
 	    }
 	}
 	
-	 @Override
-    public User findUserIdByInfo(String name, String phone, String email, Date birthdate) {
-        SqlSession session = sqlSessionFactory.openSession();
-        try {
-            return userDAO.findUserIdByInfo(session, name, phone, email, birthdate);
-        } finally {
-            session.close();
-        }
-    }
+	@Override
+	public User findUserByInfo(String name, String phone, String email, Date birthdate) {
+	    try (SqlSession session = sqlSessionFactory.openSession()) {
+	        return userDAO.findUserIdByInfo(session, name, phone, email, birthdate);
+	    } catch (Exception e) {
+	        logger.error("Error in findUserByInfo: ", e);
+	        return null;
+	    }
+	}
 }

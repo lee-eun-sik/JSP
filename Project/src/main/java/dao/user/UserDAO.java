@@ -62,17 +62,18 @@ public class UserDAO {
         return false;
     }
     
-    public boolean deleteUser(SqlSession session, String  userId) {
-    	// 사용자 정보를 DB에서 검색
-    	try {
-    		int result = session.delete("UserMapper.deleteUser", userId);
-    		session.commit();
-    		return result >0;
-    	} catch (Exception e) {
-    		session.rollback();// 오류 발생 시 롤백
-    		logger.error("Error in deleteUser: ", 0);
-    		return false;
-    	}
+    public boolean deleteUser(SqlSession session, String userId) {
+        try {
+            User user = new User();
+            user.setUserId(userId);
+            int result = session.update("UserMapper.deleteUser", user);
+            session.commit();
+            return result > 0;
+        } catch (Exception e) {
+            session.rollback();
+            logger.error("Error in deleteUser: ", e); // <- e로 수정
+            return false;
+        }
     }
     
     public boolean updateUser(User user) {
@@ -101,7 +102,8 @@ public class UserDAO {
     public boolean updatePassword(SqlSession session, String userId, String newPassword) {
     	try {
             int result = session.update("UserMapper.updatePassword", 
-                Map.of("userId", userId, "password", newPassword));
+            		
+               Map.of("userId", userId, "password", newPassword));
             return result > 0;  // 1 이상이면 성공
         } catch (Exception e) {
             logger.error("Error in updatePassword: ", e);
@@ -113,15 +115,9 @@ public class UserDAO {
         return session.selectList("UserMapper.getAllUsers");
     }
     
-    public String findUserId(SqlSession session, String name, String phone, String email, Date birthdate) {
+    public String findUserId(SqlSession session, User user) {
         try {
-            Map<String, Object> paramMap = new HashMap<>();
-            paramMap.put("name", name);
-            paramMap.put("phone", phone);
-            paramMap.put("email", email);
-            paramMap.put("birthdate", birthdate);
-
-            return session.selectOne("UserMapper.findUserId", paramMap);
+            return session.selectOne("UserMapper.findUserId", user);
         } catch (Exception e) {
             logger.error("Error in findUserId: ", e);
             return null;
@@ -145,7 +141,12 @@ public class UserDAO {
     }
     
     public User findUserIdByInfo(SqlSession session, String name, String phone, String email, Date birthdate) {
-        return session.selectOne("UserMapper.findUserIdByInfo", 
-            Map.of("name", name, "phone", phone, "email", email, "birthdate", birthdate));
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("username", name); // 주의: key 이름은 반드시 XML #{username}과 일치
+        paramMap.put("phonenumber", phone);
+        paramMap.put("email", email);
+        paramMap.put("birthdate", birthdate);
+        
+        return session.selectOne("UserMapper.findUserIdByInfo", paramMap);
     }
 }
