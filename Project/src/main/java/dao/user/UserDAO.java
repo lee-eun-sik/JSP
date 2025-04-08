@@ -2,6 +2,8 @@ package dao.user;
 
 
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -109,5 +111,41 @@ public class UserDAO {
     
     public List<User> getAllUsers(SqlSession session) {
         return session.selectList("UserMapper.getAllUsers");
+    }
+    
+    public String findUserId(SqlSession session, String name, String phone, String email, Date birthdate) {
+        try {
+            Map<String, Object> paramMap = new HashMap<>();
+            paramMap.put("name", name);
+            paramMap.put("phone", phone);
+            paramMap.put("email", email);
+            paramMap.put("birthdate", birthdate);
+
+            return session.selectOne("UserMapper.findUserId", paramMap);
+        } catch (Exception e) {
+            logger.error("Error in findUserId: ", e);
+            return null;
+        }
+    }
+    
+    public User findUserForPasswordReset(SqlSession session, User user) {
+        try {
+            Map<String, Object> paramMap = new HashMap<>();
+            paramMap.put("userId", user.getUserId());
+            paramMap.put("name", user.getUsername());
+            paramMap.put("phone", user.getPhonenumber());
+            paramMap.put("email", user.getEmail());
+            paramMap.put("birthdate", user.getBirthdate());
+
+            return session.selectOne("UserMapper.findUserForPasswordReset", paramMap);
+        } catch (Exception e) {
+            logger.error("Error in findUserForPasswordReset: ", e);
+            return null;
+        }
+    }
+    
+    public User findUserIdByInfo(SqlSession session, String name, String phone, String email, Date birthdate) {
+        return session.selectOne("UserMapper.findUserIdByInfo", 
+            Map.of("name", name, "phone", phone, "email", email, "birthdate", birthdate));
     }
 }

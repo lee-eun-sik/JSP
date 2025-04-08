@@ -170,36 +170,40 @@ public class FileController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		logger.info("FileController doPost");
-        String path = request.getRequestURI();
-        response.setContentType("application/json; charset=UTF-8"); // 응답 타입 설정
-        PrintWriter out = response.getWriter(); // PrintWriter 객체 생성
-        JSONObject jsonResponse = new JSONObject(); // JSON 응답 객체 생성
-        try {
-            logger.info("FileController doPost path: " + path);
-            //유저 가입시 처리
-            if ("/file/imgUpload.do".equals(path)) { 
-            	
-            	HashMap resultMap = fileService.insertBoardFiles(request);
-            	
-            	boolean isUploadFile = (boolean) resultMap.get("result");
-            	jsonResponse.put("success", isUploadFile);
-            	jsonResponse.put("message", isUploadFile ? 
-            			"파일 업로드 성공되었습니다." : "파일 업로드 실패");
-            	if(isUploadFile) {
-            		jsonResponse.put("url", "/file/imgDown.do?fileId="
-            							+ resultMap.get("fileId"));//주소넘기면 이미지 다운받아서 넘겨준다.
-            	}
-            } 
-        } catch (Exception e) {
-            jsonResponse.put("success", false); // 오류 발생 시
-            jsonResponse.put("message", "서버 오류 발생"); // 오류 메시지
-            logger.error("Error in FileControllers doPost", e); // 오류 로그 추가
-        }
-        
-        logger.info("jsonResponse.toString() : ", jsonResponse.toString()); 
-        // JSON 응답 출력
-        out.print(jsonResponse.toString());
-        out.flush();
+	    String path = request.getRequestURI();
+	    response.setContentType("application/json; charset=UTF-8"); // 응답 타입 설정
+	    PrintWriter out = response.getWriter(); // PrintWriter 객체 생성
+	    JSONObject jsonResponse = new JSONObject(); // JSON 응답 객체 생성
+
+	    try {
+	        logger.info("FileController doPost path: " + path);
+
+	        // 이미지 업로드 처리
+	        if ("/file/imgUpload.do".equals(path)) { 
+	            HashMap<String, Object> resultMap = fileService.insertBoardFiles(request);
+	            boolean isUploadFile = (boolean) resultMap.get("result");
+
+	            jsonResponse.put("success", isUploadFile);
+	            jsonResponse.put("message", isUploadFile ? 
+	                "파일 업로드 성공되었습니다." : "파일 업로드 실패");
+
+	            if (isUploadFile) {
+	                Object fileId = resultMap.get("fileId");
+	                if (fileId != null) {
+	                    jsonResponse.put("url", "/file/imgDown.do?fileId=" + fileId);
+	                }
+	            }
+	        }
+
+	    } catch (Exception e) {
+	        jsonResponse.put("success", false); // 오류 발생 시
+	        jsonResponse.put("message", "서버 오류 발생"); // 오류 메시지
+	        logger.error("Error in FileController doPost", e); // 오류 로그 추가
+	    }
+
+	    logger.info("jsonResponse.toString(): " + jsonResponse.toString());
+	    out.print(jsonResponse.toString());
+	    out.flush();
 	}
 
 }

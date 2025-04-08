@@ -25,8 +25,8 @@ body {
 						<input type="text" name="id" placeholder="아이디"><br/>
 						<input type="password" name="pass" placeholder="비밀번호">
 						<div>
-							<a href="FindID.jsp">아이디찾기</a>
-							<a href="FIndPW.jsp">비밀번호찾기</a>
+							<a href="/user/findId.do">아이디찾기</a>
+							<a href="/user/findPw.do">비밀번호찾기</a>
 						</div>
 						<button type="submit">로그인</button>
 			</form>

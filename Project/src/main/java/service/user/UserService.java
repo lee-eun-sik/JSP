@@ -1,5 +1,6 @@
 package service.user;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
@@ -39,4 +40,12 @@ public interface UserService {
     boolean changePassword(String userId, String currentPassword, String newPassword); // 비밀번호 변경
     
     List<User> getAllUsers(); // 이게 있어야 합니다!
+    
+    // UserService.java
+    String findUserId(String name, String phone, String email, java.util.Date birthdate);
+    
+ // 비밀번호 초기화를 위한 사용자 정보 확인
+    User findUserForPasswordReset(User user);
+    
+    public User findUserIdByInfo(String name, String phone, String email, Date birthdate);
 }

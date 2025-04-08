@@ -1,0 +1,17 @@
+@charset "UTF-8";
+body{
+	margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center; /* 수평 중앙 정렬 */
+    align-items: center; /* 수직 중앙 정렬 */
+    min-height: 100vh; /* 전체 화면 높이를 최소로 설정 */
+}
+
+
+.contentbox{
+	background-color: #F1B0A2;
+    width: 300px;
+    height: 300px;
+    border-radius: 15px;
+}

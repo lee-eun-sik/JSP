@@ -117,4 +117,34 @@
 	   FROM USERS
 	   WHERE DEL_YN = 'N'
 	</select>
+	
+	<!-- 사용자 아이디 찾기 -->
+	<select id="findUserId" resultType="string" parameterType="map">
+	    SELECT USER_ID
+	    FROM USERS
+	    WHERE USERNAME = #{name}
+	      AND PHONENUMBER = #{phone}
+	      AND EMAIL = #{email}
+	      AND BIRTHDATE = #{birthdate}
+	      AND DEL_YN = 'N'
+	</select>
+	
+	<!-- 비밀번호 초기화를 위한 사용자 정보 확인 -->
+	<select id="findUserForPasswordReset" resultType="model.user.User" parameterType="map">
+	    SELECT USER_ID, USERNAME, PHONENUMBER, EMAIL, BIRTHDATE, PASSWORD, DEL_YN
+	    FROM USERS 
+	    WHERE USER_ID = #{userId}
+	      AND USERNAME = #{name}
+	      AND PHONENUMBER = #{phone}
+	      AND EMAIL = #{email}
+	      AND BIRTHDATE = #{birthdate}
+	</select>
+	
+	<select id="findUserIdByInfo" parameterType="map" resultType="model.user.User">
+	    SELECT * FROM users
+	    WHERE name = #{name}
+	      AND phone = #{phone}
+	      AND email = #{email}
+	      AND birthdate = #{birthdate}
+	</select>
 </mapper>

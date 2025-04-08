@@ -1,6 +1,7 @@
 package service.user;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
@@ -154,5 +155,34 @@ public class UserServiceImpl implements UserService {// 보안때문, 인터페�
 	    }
 	}
 	
+	@Override
+	public String findUserId(String name, String phone, String email, Date birthdate) {
+	    try (SqlSession session = sqlSessionFactory.openSession()) {
+	        return userDAO.findUserId(session, name, phone, email, birthdate);
+	    } catch (Exception e) {
+	        logger.error("Error in findUserId: ", e);
+	        return null;
+	    }
+	}
 	
+	@Override
+	public User findUserForPasswordReset(User user) {
+	    try (SqlSession session = sqlSessionFactory.openSession()) {
+	        // DAO 메서드 호출 (추가해야 함)
+	        return userDAO.findUserForPasswordReset(session, user);
+	    } catch (Exception e) {
+	        logger.error("Error in findUserForPasswordReset: ", e);
+	        return null;
+	    }
+	}
+	
+	 @Override
+    public User findUserIdByInfo(String name, String phone, String email, Date birthdate) {
+        SqlSession session = sqlSessionFactory.openSession();
+        try {
+            return userDAO.findUserIdByInfo(session, name, phone, email, birthdate);
+        } finally {
+            session.close();
+        }
+    }
 }
