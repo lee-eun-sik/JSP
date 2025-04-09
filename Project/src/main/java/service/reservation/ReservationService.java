@@ -16,7 +16,7 @@ public interface ReservationService {
     public Reservation getReservationById(String boardId);
     
     //예약목록을 조회하는 메서드
-    public List<Reservation> getReservationList(Reservation reservation);
+    public List getReservationList(Reservation reservation);
     
     //펫시터목록을 조회하는 메서드
     public List<PetSitter> getPetSitterList();

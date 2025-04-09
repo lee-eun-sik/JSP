@@ -1,62 +1,54 @@
 package dao.reservation;
 
 import java.util.List;
-
-
-
 import org.apache.ibatis.session.SqlSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import model.board.Comment;
 import model.reservation.Reservation;
-import model.board.Board;
-
-
 
 public class ReservationDAO {
-    private static final Logger logger = LogManager.getLogger(ReservationDAO.class); // Logger 인스턴스 생성
-   
-    //예약신청 생성
+    private static final Logger logger = LogManager.getLogger(ReservationDAO.class);
+
+    // 예약 생성
     public boolean createReservation(SqlSession session, Reservation reservation) {
-        int result = session.insert("ReservationMapper.create", reservation); // 사용자 등록 쿼리 실행
-        return result > 0; // 삽입 성공 여부 반환
+        int result = session.insert("ReservationMapper.create", reservation);
+        logger.info("예약 생성 결과: {}", result);
+        return result > 0;
     }
-    
-    //예약목록 아이디로 조회
+
+    // 예약 ID로 조회
     public Reservation getReservationById(SqlSession session, String boardId) {
-        // 사용자 정보를 DB에서 검색
-    	Reservation reservation = 
-        			//selectOned는 select할건데 하나만 가져올거야.
-        			//mapper namespace="BoardMapper"에서 select id="getBoardById"를 BoardMapper.xml에서 가져옴
-        		session.selectOne("ReservationMapper.getReservationById", boardId);
-        				 return reservation;
-
+        Reservation reservation = session.selectOne("ReservationMapper.getReservationById", boardId);
+        logger.info("예약 상세 조회: {}", reservation);
+        return reservation;
     }
-        //조건에 맞는 게시판 목록조회
-        public List  getReservationList(SqlSession session, Reservation reservation) {
 
-        	List ReservationList =   
-            		session.selectList("ReservationMapper.getReservationList", reservation);
-            				 return ReservationList;
-        }
-        //전체 예약신청 총 개수
-        public int  getTotalReservationCount(SqlSession session) {
+    // 예약 목록 조회
+    @SuppressWarnings("unchecked")
+    public List<Reservation> getReservationList(SqlSession session, Reservation reservation) {
+        List<Reservation> list = session.selectList("ReservationMapper.getReservationList", reservation);
+        logger.info("예약 목록 조회 결과 수: {}", list != null ? list.size() : 0);
+        return list;
+    }
 
-        	int totalCount =   
-            		session.selectOne("ReservationMapper.getTotalReservationCount");
-            				 return totalCount;
-        }
-        
-        //신청 수정
-        public boolean updateReservation(SqlSession session, Reservation reservation) {
-            int result = session.update("ReservationMapper.updateReservation", reservation);
-            return result > 0; // 업데이트 성공 여부 반환
-        }
-        
-        //신청 삭제
-        public boolean deleteReservation(SqlSession session, Reservation reservation) {
-            int result = session.update("ReservationMapper.deleteReservation", reservation);  // 삭제 처리 쿼리 실행
-            return result > 0;  // 업데이트 성공 여부 반환
-        }
-}  
+    // 전체 예약 수
+    public int getTotalReservationCount(SqlSession session) {
+        int total = session.selectOne("ReservationMapper.getTotalReservationCount");
+        logger.info("총 예약 건수: {}", total);
+        return total;
+    }
+
+    // 예약 수정
+    public boolean updateReservation(SqlSession session, Reservation reservation) {
+        int result = session.update("ReservationMapper.updateReservation", reservation);
+        logger.info("예약 수정 결과: {}", result);
+        return result > 0;
+    }
+
+    // 예약 삭제
+    public boolean deleteReservation(SqlSession session, Reservation reservation) {
+        int result = session.update("ReservationMapper.deleteReservation", reservation);
+        logger.info("예약 삭제 결과: {}", result);
+        return result > 0;
+    }
+}

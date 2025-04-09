@@ -1,9 +1,8 @@
 // 공통 유효성 검사 함수
 var validationUtil = {
-    // 입력값이 비어있는지 확인
-    isEmpty: function (value) {
-        return !(value.trim() === "");
-    },
+	isEmpty: function (value) {
+		return !value || value.trim() === "";
+	},
 
     // 최소 길이 체크
     minLength: function (value, length) {
@@ -14,13 +13,13 @@ var validationUtil = {
     maxLength: function (value, length) {
         return value.length <= length;
     },
-
-    // 숫자만 포함하는지 체크
+	// 숫자만 포함하는지 체크
     isNumeric: function (value) {
         return /^[0-9]+$/.test(value);
     },
 
     // 이메일 형식 체크
+	// 이메일 형식 체크
     isEmail: function (value) {
         var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailPattern.test(value);

@@ -20,7 +20,9 @@ public class PetSitterDAO {
    
  // 예약 가능한 펫시터 리스트 조회
     public List<PetSitter> getPetSitterList(SqlSession session) {
-        return session.selectList("PetSitterMapper.getPetSitterList");
+    	 List<PetSitter> sitterList = session.selectList("PetSitterMapper.getPetSitterList");
+	     logger.info("DAO에서 가져온 펫시터 리스트: {}", sitterList);
+	     return sitterList;
         
     }
 }  

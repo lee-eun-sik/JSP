@@ -25,8 +25,8 @@
 				<th class="num">펫이름</th>
 				<th>전화번호</th>
 				<th class="num">펫시터</th>
-				<th class="num2">일급</th>
-				<th class="num3">관리</th>
+				<th class="num2">가격</th>
+				<th class="num3"></th>
 			</tr>
 		</thead>
 		<tbody >

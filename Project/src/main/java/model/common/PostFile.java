@@ -38,6 +38,4 @@ public class PostFile extends Model{
 	public void setDelYn(String delYn) {
 		this.delYn = delYn;
 	}
-
-    
 }

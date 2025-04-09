@@ -6,43 +6,44 @@
     
      <!-- 예약신청 생성  -->
     <insert id="create" parameterType="model.reservation.Reservation">
-        INSERT INTO RESERVATION
-         (
+        INSERT INTO RESERVATION (
 	        BOARD_ID,
-	         
-			RESERVATION_DATE,
-			START_DATE,
-			END_DATE, 
-			ADDRESS,
-			VARIETY,  
-			PET_NAME, 
-			PHONENUMBER, 
-			SITTER, 
-			PRICE,
-			REPLY,
-			ADDRESSDETAIL,
-            CREATE_ID,
-	        CREATE_DT
-			
-          )
-        VALUES
-         (
-	         SEQ_BOARD.NEXTVAL,
-             #{reservationDate},
-             TO_DATE(#{startDate}, 'YYYY-MM-DD'),
-             TO_DATE(#{endDate}, 'YYYY-MM-DD'),
-	         #{address}, 
-	         #{variety}, 
-	         #{petName},
-	         #{phoneNumber},
-	         #{sitter},
-	         #{price},
-	         #{reply},
-	         #{addressDetail},
-     	     #{createId},
-	         SYSDATE
-         )
-         <selectKey keyProperty="boardId" resultType="string" order="AFTER">
+	        RESERVATION_DATE,
+	        START_DATE,
+	        END_DATE,
+	        ADDRESS,
+	        VARIETY,
+	        PET_NAME,
+	        PHONENUMBER,
+	        SITTER,
+	        PRICE,
+	        REPLY,
+	        ADDRESSDETAIL,
+	        CREATE_ID,
+	        CREATE_DT,
+	        UPDATE_ID,
+	        UPDATE_DT,
+	        DEL_YN
+	    ) VALUES (
+	        SEQ_BOARD.NEXTVAL,
+	        #{reservationDate},
+	        #{startDate},
+	        #{endDate},
+	        #{address},
+	        #{variety},
+	        #{petName},
+	        #{phoneNumber},
+	        #{sitter},
+	        #{price},
+	        #{reply},
+	        #{addressDetail},
+	        #{createId},
+	        SYSDATE,
+	        NULL,
+	        NULL,
+	        'N'
+	    )
+         <selectKey keyProperty="boardId" resultType="int" order="AFTER">
          SELECT SEQ_BOARD.CURRVAL FROM DUAL
          </selectKey>
     </insert> 
@@ -97,10 +98,10 @@
   	</select>
   	
   	<!-- 예약신청 ID view에 필요한거 -->
-      <select id="getReservationById" parameterType="java.lang.String" resultType="model.reservation.Reservation">
+      <select id="getReservationById" parameterType="string" resultType="model.reservation.Reservation">
 		SELECT
-	    	BOARD_ID,
-	    	RESERVATION_DATE,
+    		BOARD_ID,
+    		RESERVATION_DATE,
 			START_DATE,
 			END_DATE, 
 			ADDRESS,
@@ -111,15 +112,15 @@
 			PRICE,
 			REPLY,
 			ADDRESSDETAIL,
-	    	CREATE_ID,
-	    	UPDATE_ID,
-	    	CREATE_DT,
-	    	UPDATE_DT,
-	    	DEL_YN
+    		CREATE_ID,
+    		UPDATE_ID,
+    		CREATE_DT,
+    		UPDATE_DT,
+    		DEL_YN
 		FROM RESERVATION
-		WHERE BOARD_ID = #{boardId, jdbcType=VARCHAR}
-		  AND DEL_YN = 'N'
-	</select>
+		WHERE BOARD_ID = #{boardId}
+		AND  DEL_YN = 'N'
+    </select>
     
     <!-- 예약신청 수정 -->
      <update id="updateReservation" parameterType="model.reservation.Reservation">

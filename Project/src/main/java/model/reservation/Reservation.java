@@ -1,5 +1,6 @@
 package model.reservation;
 
+import java.sql.Date;
 import java.util.List;
 
 import model.board.Comment;
@@ -10,9 +11,9 @@ public class Reservation extends Model {
 	
 	
 	private String boardId;
-	private String startDate;
-	private String endDate;
-	private String reservationDate;
+	private Date startDate;
+	private Date endDate;
+	private Date reservationDate;
 	private String address;
 	private String variety;
 	private String addressDetail;
@@ -65,38 +66,44 @@ public class Reservation extends Model {
 
 
 
-	public String getReservationDate() {
-		return reservationDate;
-	}
-
-
-
-	public void setReservationDate(String reservationDate) {
-		this.reservationDate = reservationDate;
-	}
+	
 
 	
 
-	public String getStartDate() {
-	    return startDate == null ? "" : startDate;
-	}
 
 
-
-	public void setStartDate(String startDate) {
+	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
 
 
 
-	public String getEndDate() {
-	    return endDate == null ? "" : endDate;
+	public Date getStartDate() {
+		return startDate;
 	}
 
 
 
-	public void setEndDate(String endDate) {
+	public Date getEndDate() {
+		return endDate;
+	}
+
+
+
+	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
+	}
+
+
+
+	public Date getReservationDate() {
+		return reservationDate;
+	}
+
+
+
+	public void setReservationDate(Date reservationDate) {
+		this.reservationDate = reservationDate;
 	}
 
 
@@ -305,6 +312,8 @@ public class Reservation extends Model {
 	public void setComments(List<Comment> comments) {
 		this.comments = comments;
 	}
+
+
 
 	
 	

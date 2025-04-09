@@ -56,6 +56,7 @@ public class ReservationController extends HttpServlet {
         try {
             if ("/reservation/create.do".equals(path)) {
                 List<PetSitter> sitterList = reservationService.getPetSitterList();
+                logger.info("sitterList: " + sitterList);
                 request.setAttribute("sitterList", sitterList);
                 request.getRequestDispatcher("/WEB-INF/jsp/reservation/create.jsp").forward(request, response);
 
@@ -93,13 +94,11 @@ public class ReservationController extends HttpServlet {
 
                 try {
                     // 날짜를 받아와서 포맷 변경
-                    Date parsedStartDate = inputFormat.parse(reservation.getStartDate());
-                    Date parsedEndDate = inputFormat.parse(reservation.getEndDate());
+                   
 
                     // 변환된 날짜를 JSP에 전달할 포맷으로 변경
-                    String formattedStartDate = outputFormat.format(parsedStartDate);
-                    String formattedEndDate = outputFormat.format(parsedEndDate);
-                    
+                	String formattedStartDate = outputFormat.format(reservation.getStartDate());
+                	String formattedEndDate = outputFormat.format(reservation.getEndDate());
                     logger.info("Formatted Start Date: " + formattedStartDate);
                     logger.info("Formatted End Date: " + formattedEndDate);
 
@@ -113,7 +112,7 @@ public class ReservationController extends HttpServlet {
                     // JSP로 포워딩
                     request.getRequestDispatcher("/WEB-INF/jsp/reservation/update.jsp").forward(request, response);
 
-                } catch (ParseException e) {
+                } catch (Exception e) {
                     logger.error("날짜 포맷 파싱 오류", e);
                     request.setAttribute("errorMessage", "날짜 형식이 잘못되었습니다.");
                     request.getRequestDispatcher("/WEB-INF/jsp/error.jsp").forward(request, response);
@@ -136,86 +135,71 @@ public class ReservationController extends HttpServlet {
         JSONObject jsonResponse = new JSONObject();
 
         try {
-            if ("/reservation/create.do".equals(path)) {
-                String startDate = request.getParameter("startDate");
-                String endDate = request.getParameter("endDate");
-                String reservationDate = request.getParameter("reservationDate");
-                String address = request.getParameter("address");
-                String variety = request.getParameter("variety");
-                String petName = request.getParameter("petName");
-                String phoneNumber = request.getParameter("phoneNumber");
-                String sitter = request.getParameter("sitter");
-                String price = request.getParameter("price");
-                String reply = request.getParameter("reply");
-                String createId = request.getParameter("createId");
-                String addressDetail = request.getParameter("addressDetail");
+        	if ("/reservation/create.do".equals(path)) {
+        	    String startDateStr = request.getParameter("startDate");
+        	    String endDateStr = request.getParameter("endDate");
+        	    String reservationDateStr = request.getParameter("reservationDate");
+        	    String address = request.getParameter("address");
+        	    String variety = request.getParameter("variety");
+        	    String petName = request.getParameter("petName");
+        	    String phoneNumber = request.getParameter("phoneNumber");
+        	    String sitter = request.getParameter("sitter");
+        	    String price = request.getParameter("price");
+        	    String reply = request.getParameter("reply");
+        	    String createId = request.getParameter("createId");
+        	    String addressDetail = request.getParameter("addressDetail");
 
-                logger.info("startDate: " + startDate);
-                logger.info("endDate: " + endDate);
+        	    logger.info("startDate: " + startDateStr);
+        	    logger.info("endDate: " + endDateStr);
+        	    logger.info("reservationDateStr: " + reservationDateStr);
+        	    try {
+        	        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-                Reservation reservation = new Reservation();
-                reservation.setStartDate(startDate);
-                reservation.setEndDate(endDate);
-                reservation.setReservationDate(reservationDate);
-                reservation.setAddress(address);
-                reservation.setVariety(variety);
-                reservation.setPetName(petName);
-                reservation.setPhoneNumber(phoneNumber);
-                reservation.setSitter(sitter);
-                reservation.setPrice(Integer.parseInt(price));
-                reservation.setReply(reply);
-                reservation.setCreateId(createId);
-                reservation.setAddressDetail(addressDetail);
+        	        if (startDateStr == null || startDateStr.isEmpty() ||
+        	            endDateStr == null || endDateStr.isEmpty() ||
+        	            reservationDateStr == null || reservationDateStr.isEmpty()) {
+        	            throw new ParseException("하나 이상의 날짜가 비어 있습니다.", 0);
+        	        }
 
-                boolean isCreate = reservationService.createReservation(reservation, request);
+        	        java.sql.Date sqlStartDate = new java.sql.Date(sdf.parse(startDateStr).getTime());
+        	        java.sql.Date sqlEndDate = new java.sql.Date(sdf.parse(endDateStr).getTime());
+        	        java.sql.Date sqlReservationDate = new java.sql.Date(sdf.parse(reservationDateStr).getTime());
+        	        logger.info("reservationDateStr: " + reservationDateStr);
+        	        // 이후 Reservation 객체 생성 및 저장 생략
+        	    } catch (ParseException e) {
+        	        logger.error("날짜 파싱 오류: ", e);
+        	        jsonResponse.put("success", false);
+        	        jsonResponse.put("message", "날짜 형식 오류 또는 값 누락으로 예약 실패");
+        	    }
+        	} else if ("/reservation/update.do".equals(path)) {
+        	    String boardId = request.getParameter("id");
+        	    logger.info("Received boardId: " + boardId);
+        	    Reservation reservation = reservationService.getReservationById(boardId);
+        	    logger.info("Fetched reservation: " + reservation.toString());
 
-                jsonResponse.put("success", isCreate);
-                jsonResponse.put("message", isCreate ? "성공적으로 예약 되었습니다." : "예약 실패");
+        	    try {
+        	        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-            } else if ("/reservation/update.do".equals(path)) {
-                String boardId = request.getParameter("boardId");
-                String startDate = request.getParameter("startDate");
-                String endDate = request.getParameter("endDate");
-                String reservationDate = request.getParameter("reservationDate");
-                String address = request.getParameter("address");
-                String variety = request.getParameter("variety");
-                String petName = request.getParameter("petName");
-                String phoneNumber = request.getParameter("phoneNumber");
-                String sitter = request.getParameter("sitter");
-                String price = request.getParameter("price");
-                String reply = request.getParameter("reply");
-                String createId = request.getParameter("createId");
-                String addressDetail = request.getParameter("addressDetail");
-                String updateId = request.getParameter("updateId");
+        	        String formattedStartDate = outputFormat.format(reservation.getStartDate());
+        	        String formattedEndDate = outputFormat.format(reservation.getEndDate());
 
-               
-                logger.info("reply: " + reply);
+        	        logger.info("Formatted Start Date: " + formattedStartDate);
+        	        logger.info("Formatted End Date: " + formattedEndDate);
 
-                Reservation reservation = new Reservation();
-                reservation.setBoardId(boardId);
-                reservation.setStartDate(startDate);
-                reservation.setEndDate(endDate);
-                reservation.setReservationDate(reservationDate);
-                reservation.setAddress(address);
-                reservation.setVariety(variety);
-                reservation.setPetName(petName);
-                reservation.setPhoneNumber(phoneNumber);
-                reservation.setSitter(sitter);
-                reservation.setPrice(Integer.parseInt(price));
-                reservation.setReply(reply);
-                reservation.setCreateId(createId);
-                reservation.setAddressDetail(addressDetail);
-                reservation.setUpdateId(updateId);
-                
-                logger.info("reply: " + reply);
+        	        List<PetSitter> sitterList = reservationService.getPetSitterList();
+        	        request.setAttribute("sitterList", sitterList);
+        	        request.setAttribute("reservation", reservation);
+        	        request.setAttribute("formattedStartDate", formattedStartDate);
+        	        request.setAttribute("formattedEndDate", formattedEndDate);
+        	        
+        	        request.getRequestDispatcher("/WEB-INF/jsp/reservation/update.jsp").forward(request, response);
 
-
-                boolean isUpdate = reservationService.updateReservation(reservation, request);
-
-                jsonResponse.put("success", isUpdate);
-                jsonResponse.put("message", isUpdate ? "게시글이 성공적으로 수정 되었습니다." : "게시글 수정 실패");
-
-            } else if ("/reservation/delete.do".equals(path)) {
+        	    } catch (Exception e) {
+        	        logger.error("날짜 포맷 오류", e);
+        	        request.setAttribute("errorMessage", "날짜 처리 중 오류가 발생했습니다.");
+        	        request.getRequestDispatcher("/WEB-INF/jsp/error.jsp").forward(request, response);
+        	    }
+        	}else if ("/reservation/delete.do".equals(path)) {
                 String boardId = request.getParameter("boardId");
                 String updateId = request.getParameter("updateId");
 

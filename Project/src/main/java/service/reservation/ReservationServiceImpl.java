@@ -2,7 +2,6 @@ package service.reservation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
@@ -21,7 +20,6 @@ import model.board.Board;
 import model.common.PostFile;
 import model.petSitter.PetSitter;
 import model.reservation.Reservation;
-import model.user.User;
 import util.FileUploadUtil;
 import util.MybatisUtil;
 
@@ -214,6 +212,5 @@ public class ReservationServiceImpl implements ReservationService {
 		// 등록 결과 반환
 		return result;
 	}
-	
-	
+
 }
