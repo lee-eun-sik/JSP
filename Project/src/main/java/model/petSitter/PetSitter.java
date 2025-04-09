@@ -4,7 +4,7 @@ import java.util.List;
 
 import model.board.Comment;
 import model.Model;
-import model.common.PostFile;
+
 
 public class PetSitter extends Model {
 	

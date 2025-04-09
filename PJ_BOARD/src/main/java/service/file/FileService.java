@@ -3,9 +3,9 @@ package service.file;
 
 import java.util.HashMap;
 import java.util.List;
-
-import jakarta.servlet.http.HttpServletRequest;
 import model.common.PostFile;
+import jakarta.servlet.http.HttpServletRequest;
+
 
 public interface FileService {
     public PostFile getFileByBoardIdAndFileId(PostFile  file);

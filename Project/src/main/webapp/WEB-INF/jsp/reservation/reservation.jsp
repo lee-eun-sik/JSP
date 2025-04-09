@@ -16,15 +16,13 @@
 </head>
 <body>
 <h2>예약신청 작성</h2>
-	<form method="post" id="reservationCreateForm">
-
+	<form method="post" id="reservationCreateForm" enctype="multipart/form-data">
 		<label for="startDate">*날짜</label>
 	    <input type="date" name="startDate" id="startDate" placeholder="시작날 선택" required>
 	    ~
 	    <input type="date" name="endDate" id="endDate" placeholder="종료날 선택" required> <br>
-		<label for="startDate">*예약날짜</label>
-		<input type="date" name="reservationDate" id="reservationDate"><br/>
-        <br/>
+	    <input type="hidden" name="reservationDate" id="reservationDate"><br/>
+	    <input type="hidden" id="createId" name="createId" value="${sessionScope.loginId}" />
         <label for="postcode">*주소</label>
 		<input type="text" id="sample6_postcode" placeholder="우편번호" readonly />
 		<input type="button" onclick="sample6_execDaumPostcode()" value="우편주소찾기" />
@@ -163,17 +161,6 @@ document.getElementById('reservationDate').value = `${yyyy}-${mm}-${dd}`;
 	            return;
 	        }
 
-	        if (!validationUtil.isEmpty(address)) {
-				alert("주소를 입력해주세요");
-				$("#sample6_address").focus();
-				return;
-			}
-	        
-	        if (!validationUtil.isEmpty(addressDetail)) {
-				alert("상세주소를 입력해주세요");
-				$("#addressDetail").focus();
-				return;
-			}
 
 			if (isNaN(price)) {
 				alert("품종을 선택해주세요");
@@ -181,51 +168,39 @@ document.getElementById('reservationDate').value = `${yyyy}-${mm}-${dd}`;
 				return;
 			}
 
-			if (!validationUtil.isEmpty(petName)) {
-				alert("펫이름을 입력해주세요");
-				$("#petName").focus();
-				return;
-			}
-			
-			
-
-			if (!validationUtil.isEmpty(sitter)) {
-				alert("펫시터를 입력해주세요");
-				$("#sitter").focus();
-				return;
-			}
-			
-			if (!sitter) {
-			    alert("펫시터를 선택해주세요");
-			    $("#sitter").focus();
-			    return;
-			}
 
 			
 
 
-			let formData = new FormData();
-			formData.append("startDate", startDate);
-			formData.append("endDate", endDate);
-			formData.append("reservationDate", reservationDate);
-			formData.append("address", address);
-			formData.append("variety", variety);
-			formData.append("petName", petName);
-			formData.append("phoneNumber", phoneNumber);
-			formData.append("sitter", sitter);
-			formData.append("price", price);
-			formData.append("reply", reply);
-			formData.append("createId", $("#createId").val());
-			formData.append("addressDetail", addressDetail);
-
-			ajaxRequestFile("/reservation/create.do", formData, function(response) {
-				if (response.success) {
-					alert("예약 신청이 완료되었습니다.");
-					window.location.href = "/user/header.do";
-				} else {
-					alert("예약 신청 생성 실패: " + response.message);
-				}
-			});
+			 let formData = new FormData();
+			    formData.append("startDate", startDate);
+			    formData.append("endDate", endDate);
+			    formData.append("reservationDate", reservationDate);
+			    formData.append("address", address);
+			    formData.append("variety", variety);
+			    formData.append("petName", petName);
+			    formData.append("phoneNumber", phoneNumber);
+			    formData.append("sitter", sitter);
+			    formData.append("price", price);
+			    formData.append("reply", reply);
+			    formData.append("createId", $("#createId").val());
+			    formData.append("addressDetail", addressDetail);
+			   
+			    $.ajax({
+			        url: "/reservation/reservation.do",
+			        type: "POST",
+			        data: formData,
+			        processData: false,
+			        contentType: false,
+			        dataType: "json",
+			        success: function (response) {
+			            console.log("성공:", response);
+			        },
+			        error: function (xhr, status, error) {
+			            console.error("에러:", error);
+			        }
+			    });
+			
 	    });
 	});
 </script>

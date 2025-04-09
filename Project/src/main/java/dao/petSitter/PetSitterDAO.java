@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import model.board.Comment;
 import model.petSitter.PetSitter;
 import model.reservation.Reservation;
+import util.MybatisUtil;
 import model.board.Board;
 
 
@@ -25,4 +26,14 @@ public class PetSitterDAO {
 	     return sitterList;
         
     }
+    
+
+	public List<PetSitter> getAllPetSitters() {
+	    try (SqlSession session = MybatisUtil.getSqlSessionFactory().openSession()) {
+	        return getPetSitterList(session);
+	    } catch (Exception e) {
+	        logger.error("getAllPetSitters() 오류 발생", e);
+	        return null;
+	    }
+	}
 }  

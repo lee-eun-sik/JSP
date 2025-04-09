@@ -33,7 +33,6 @@
             DEL_YN
         FROM POST_FILE
         WHERE FILE_ID = #{fileId}
-        AND BOARD_ID = #{boardId}
         AND DEL_YN = 'N'
     </select>
     

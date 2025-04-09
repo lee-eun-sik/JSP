@@ -9,6 +9,8 @@ import model.reservation.Reservation;
 import model.board.Board;
 
 public interface ReservationService {
+	// 예약 신청 (간단한 버전)
+    boolean insertReservation(Reservation reservation);
 	//예약신청
 	public boolean createReservation(Reservation reservation, HttpServletRequest request);
 	

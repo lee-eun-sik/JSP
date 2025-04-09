@@ -15,8 +15,9 @@ import org.apache.logging.log4j.Logger;
 import dao.file.FileDAO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.Part;
-import model.common.PostFile;
 import util.FileUploadUtil;
+import model.common.PostFile;
+
 import util.MybatisUtil;
 
 public class FileServiceImpl implements FileService {// 보안때문, 인터페이스 호출, 스프링때문에 생긴이유

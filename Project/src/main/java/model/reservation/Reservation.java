@@ -5,7 +5,7 @@ import java.util.List;
 
 import model.board.Comment;
 import model.Model;
-import model.common.PostFile;
+
 
 public class Reservation extends Model {
 	
@@ -13,13 +13,13 @@ public class Reservation extends Model {
 	private String boardId;
 	private Date startDate;
 	private Date endDate;
-	private Date reservationDate;
+	private int reservationDays; // 기존 reservationDate → 예약 일수
 	private String address;
 	private String variety;
 	private String addressDetail;
 	private String petName;
 	private String phoneNumber;
-	private String sitter;
+	private String sitterName;
 	private int price;
 	private String reply;
 	
@@ -32,18 +32,18 @@ public class Reservation extends Model {
 	
 	private int totalCount;
 	private int totalPage;
-	
-   private List<PostFile> postFiles;
+	private Date reservationDate; // 예약 날짜 추가
+   
    
    private List<Comment> comments;
 	
 	
 	@Override
 	public String toString() {
-	    return "Reservation [boardId=" + boardId + ", reservationDate=" + reservationDate + 
+	    return "Reservation [boardId=" + boardId + ", reservationDate=" + reservationDays + 
 	    	   ", startDate=" + startDate+ ", endDate=" + endDate + 
 	           ", address=" + address + ", variety=" + variety + ", petName=" + petName + 
-	           ", phoneNumber=" + phoneNumber + ", sitter=" + sitter + ", price=" + price + 
+	           ", phoneNumber=" + phoneNumber + ", sitter=" + sitterName + ", price=" + price + 
 	           
 	           ", rn=" + rn + ", startRow=" + startRow + ", endRow=" + endRow +
 	           ", page=" + page + ", size=" + size + ", totalCount=" + totalCount +
@@ -66,20 +66,14 @@ public class Reservation extends Model {
 
 
 
-	
-
-	
+	public Date getStartDate() {
+		return startDate;
+	}
 
 
 
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
-	}
-
-
-
-	public Date getStartDate() {
-		return startDate;
 	}
 
 
@@ -96,14 +90,17 @@ public class Reservation extends Model {
 
 
 
-	public Date getReservationDate() {
-		return reservationDate;
+	
+
+
+	public int getReservationDays() {
+		return reservationDays;
 	}
 
 
 
-	public void setReservationDate(Date reservationDate) {
-		this.reservationDate = reservationDate;
+	public void setReservationDays(int reservationDays) {
+		this.reservationDays = reservationDays;
 	}
 
 
@@ -155,14 +152,14 @@ public class Reservation extends Model {
 
 
 
-	public String getSitter() {
-		return sitter;
+	public String getSitterName() {
+		return sitterName;
 	}
 
 
 
-	public void setSitter(String sitter) {
-		this.sitter = sitter;
+	public void setSitterName(String sitterName) {
+		this.sitterName = sitterName;
 	}
 
 
@@ -291,16 +288,6 @@ public class Reservation extends Model {
 
 
 
-	public List<PostFile> getPostFiles() {
-		return postFiles;
-	}
-
-
-
-	public void setPostFiles(List<PostFile> postFiles) {
-		this.postFiles = postFiles;
-	}
-
 
 
 	public List<Comment> getComments() {
@@ -312,6 +299,22 @@ public class Reservation extends Model {
 	public void setComments(List<Comment> comments) {
 		this.comments = comments;
 	}
+
+
+
+	public Date getReservationDate() {
+		return reservationDate;
+	}
+
+
+
+	public void setReservationDate(Date reservationDate) {
+		this.reservationDate = reservationDate;
+	}
+
+
+
+	
 
 
 
