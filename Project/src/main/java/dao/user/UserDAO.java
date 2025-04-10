@@ -119,4 +119,9 @@ public class UserDAO {
         return session.selectOne("UserMapper.findUserByInfo", 
             Map.of("name", name, "phone", phone, "email", email, "birthdate", birthdate));
     }
+    
+    public User findUserByCredentials(SqlSession session, String name, String userId, String phone, Date birthDate) {
+    	return session.selectOne("UserMapper.findUserByCredentials", 
+    		    Map.of("name", name, "userId", userId, "phone", phone, "birthDate", birthDate));
+    }
 }

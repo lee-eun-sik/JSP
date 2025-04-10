@@ -32,17 +32,25 @@ public class FindController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	String path = request.getPathInfo();
-    	if ("/find/findId.do".equals(path)) {
-            request.getRequestDispatcher("/WEB-INF/jsp/find/FindID.jsp").forward(request, response);
+    	String uri = request.getRequestURI();
+        String contextPath = request.getContextPath();
+        String path = uri.substring(contextPath.length()); // context path 제거
+    	System.out.println("GET path: " + path);
+    	if ("/find/FindID.do".equals(path)) {
+            request.getRequestDispatcher("/WEB-INF/jsp/find/findId.jsp").forward(request, response);
+        } else if ("/find/FindPw.do".equals(path)) {
+            request.getRequestDispatcher("/WEB-INF/jsp/find/findPw.jsp").forward(request, response);
         }
      }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	 String path = request.getPathInfo();
+    	String uri = request.getRequestURI();
+        String contextPath = request.getContextPath();
+        String path = uri.substring(contextPath.length()); // context path 제거
+    	 
     	 response.setContentType("application/json; charset=UTF-8");
-    	    if ("/find/findId.do".equals(path)) {
+    	    if ("/find/FindID.do".equals(path)) {
     	        StringBuilder sb = new StringBuilder();
     	        BufferedReader reader = request.getReader();
     	        String line;
@@ -50,7 +58,7 @@ public class FindController extends HttpServlet {
     	        while ((line = reader.readLine()) != null) {
     	            sb.append(line);
     	        }
-
+    	       
     	        try {
     	            JSONObject json = new JSONObject(sb.toString());
 
@@ -84,6 +92,43 @@ public class FindController extends HttpServlet {
     	        } catch (Exception e) {
     	            logger.error("아이디 찾기 오류", e);
     	            
+    	            response.getWriter().print("{\"success\": false, \"message\": \"서버 오류\"}");
+    	        }
+    	    }else if ("/find/FindPw.do".equals(path)) {
+    	        StringBuilder sb = new StringBuilder();
+    	        BufferedReader reader = request.getReader();
+    	        String line;
+    	        while ((line = reader.readLine()) != null) {
+    	            sb.append(line);
+    	        }
+
+    	        try {
+    	            JSONObject json = new JSONObject(sb.toString());
+    	            String name = json.getString("name");
+    	            String userId = json.getString("userId");
+    	            String phone = json.getString("phone");
+    	            String birthdateStr = json.getString("birthdate");
+
+    	            SimpleDateFormat inputFormat = new SimpleDateFormat("MM/dd/yyyy");
+    	            SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
+    	            Date birthdate = inputFormat.parse(birthdateStr);
+    	            String formattedBirthdate = outputFormat.format(birthdate);
+    	            Date birthDateParsed = outputFormat.parse(formattedBirthdate);
+
+    	            User user = userService.findUserByCredentials(name, userId, phone, birthDateParsed);
+
+    	            PrintWriter out = response.getWriter();
+    	            if (user != null) {
+    	                JSONObject result = new JSONObject();
+    	                result.put("success", true);
+    	                result.put("password", user.getPassword()); // 실제 서비스에서는 보안상 절대 안됨 (예: 임시 비밀번호 발급 등 필요)
+    	                out.print(result.toString());
+    	            } else {
+    	                out.print("{\"success\": false}");
+    	            }
+    	            out.flush();
+    	        } catch (Exception e) {
+    	            logger.error("비밀번호 찾기 오류", e);
     	            response.getWriter().print("{\"success\": false, \"message\": \"서버 오류\"}");
     	        }
     	    }

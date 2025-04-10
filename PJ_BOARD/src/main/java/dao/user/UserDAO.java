@@ -1,7 +1,10 @@
 package dao.user;
 
 import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.ibatis.session.SqlSession;
@@ -55,5 +58,23 @@ public class UserDAO {
     
     public String getUserRole(SqlSession session, String userId) {
         return session.selectOne("UserMapper.getUserRoleById", userId);
+    }
+    
+    public User findUserByInfo(SqlSession session, String name, String phone, Date birthdate) {
+        Map<String, Object> paramMap = new HashMap<>();
+       
+        paramMap.put("name", name);
+        paramMap.put("phone", phone);
+        paramMap.put("birthdate", birthdate);
+        return session.selectOne("UserMapper.findUserByInfo", paramMap);
+    }
+    
+    public User findUserByCredentials(SqlSession session, String name, String userId, String phone, Date birthdate) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("name", name);
+        params.put("userId", userId);
+        params.put("phone", phone);
+        params.put("birthdate", birthdate);
+        return session.selectOne("UserMapper.findUserByCredentials", params);
     }
 }

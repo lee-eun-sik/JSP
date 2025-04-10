@@ -1,5 +1,7 @@
 package service.user;
 
+import java.util.Date;
+
 import model.user.User;
 
 public interface UserService {
@@ -13,4 +15,6 @@ public interface UserService {
     public User getUserById(String userId);
     
     public User deleteUser(String userId);
+
+	
 }

@@ -116,12 +116,34 @@
 	   WHERE DEL_YN = 'N'
 	</select>
 	
-	<select id="findUserByInfo" resultType="model.user.User" parameterType="map">
-	    SELECT *
-	    FROM users
-	    WHERE name = #{name}
-	      AND phone = #{phone}
-	      AND email = #{email}
-	      AND birthdate = #{birthdate}
+	<select id="findUserByInfo" resultMap="userResultMap">
+	  SELECT 
+	    USER_ID,
+	    USERNAME,
+	    PHONENUMBER,
+	    EMAIL,
+	    BIRTH_DATE,
+	    PASSWORD,
+	    CREATE_ID,
+	    UPDATE_ID,
+	    CREATE_DT,
+	    UPDATE_DT,
+	    ROLE,
+	    GENDER,
+	    DEL_YN
+	  FROM USERS
+	  WHERE USERNAME = #{name}
+	    AND PHONENUMBER = #{phone}
+	    AND BIRTH_DATE = #{birthdate}
+	    AND DEL_YN = 'N'
+	</select>
+	
+	<select id="findUserByCredentials" resultType="model.user.User">
+	  SELECT *
+	  FROM users
+	  WHERE username = #{name}
+	    AND user_id = #{userId}
+	    AND phonenumber = #{phone}
+	    AND BIRTH_DATE = #{birthDate, jdbcType=DATE}
 	</select>
 </mapper>

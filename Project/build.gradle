@@ -43,7 +43,11 @@ dependencies {
     // 파일 업로드 지원 (Commons FileUpload)
     implementation 'commons-io:commons-io:2.14.0'
 	implementation 'commons-fileupload:commons-fileupload:1.5'
+    // ✅ 이메일 인증용 Jakarta Mail
+    implementation 'com.sun.mail:jakarta.mail:2.0.1' // 최신 버전 (2023)
     
+    // Jakarta Activation (메일에서 첨부파일 등 MIME 타입 지원에 필요)
+    implementation 'com.sun.activation:jakarta.activation:2.0.1'
 }
 
 tasks.withType(JavaCompile).configureEach {

@@ -163,4 +163,14 @@ public class UserServiceImpl implements UserService {// 보안때문, 인터페�
 	        return null;
 	    }
 	}
+
+	@Override
+	public User findUserByCredentials(String name, String userId, String phone, Date birthDateParsed) {
+	    try (SqlSession session = sqlSessionFactory.openSession()) {
+	        return userDAO.findUserByCredentials(session, name, userId, phone, birthDateParsed);
+	    } catch (Exception e) {
+	        logger.error("Error in findUserByCredentials: ", e);
+	        return null;
+	    }
+	}
 }

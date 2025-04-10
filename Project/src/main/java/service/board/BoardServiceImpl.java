@@ -34,6 +34,54 @@ public class BoardServiceImpl implements BoardService {// 보안때문, 인터�
       
     }
 
+	@Override
+	public List<Board> getBoardList(Board board) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean createBoard(Board board, HttpServletRequest request) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean updateBoard(Board board, HttpServletRequest request) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean deleteBoard(Board board) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean createComment(Comment comment) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean updateComment(Comment comment) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean deleteComment(Comment comment) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Board getBoardById(String boardId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
     //함수남김
     
 //	 public Board getBoardById(String boardId) {
