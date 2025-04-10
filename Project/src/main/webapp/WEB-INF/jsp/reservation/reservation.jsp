@@ -194,7 +194,12 @@ document.getElementById('reservationDate').value = `${yyyy}-${mm}-${dd}`;
 			        contentType: false,
 			        dataType: "json",
 			        success: function (response) {
-			            console.log("성공:", response);
+			            if(response.success) {
+			            	// 성공 시 이동
+			            	alert("예약성공 메인페이지로 갑니다.")
+				            window.location.href = "/user/header.do";
+			            }
+			        
 			        },
 			        error: function (xhr, status, error) {
 			            console.error("에러:", error);

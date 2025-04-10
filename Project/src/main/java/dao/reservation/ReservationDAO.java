@@ -15,23 +15,21 @@ public class ReservationDAO {
     private SqlSessionFactory sqlSessionFactory = MybatisUtil.getSqlSessionFactory();
     
 
-    // 예약 ID로 조회
-    public Reservation getReservationById(SqlSession session, String boardId) {
-        Reservation reservation = session.selectOne("ReservationMapper.getReservationById", boardId);
-        logger.info("예약 상세 조회: {}", reservation);
-        return reservation;
-    }
-
- // 예약 등록 메서드 추가
-    public boolean createReservation(SqlSession session, Reservation reservation) {
+    public int insertReservation(SqlSession session, Reservation reservation) {
         try {
-            int result = session.insert("ReservationMapper.insertReservation", reservation);
-            logger.info("예약 등록 결과: {}", result);
-            return result > 0;
+            return session.insert("mapper.reservation.ReservationMapper.insertReservation", reservation);
         } catch (Exception e) {
-            logger.error("예약 등록 중 예외 발생", e);
-            return false;
+            logger.error("예약 정보 삽입 중 오류 발생", e);
+            return 0;
         }
     }
-   
+    
+    public List<Reservation> getAllReservations(SqlSession session) {
+        try {
+            return session.selectList("mapper.reservation.ReservationMapper.selectAllReservations");
+        } catch (Exception e) {
+            logger.error("예약 목록 조회 중 오류 발생", e);
+            return null;
+        }
+    }
 }

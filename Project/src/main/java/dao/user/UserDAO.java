@@ -102,9 +102,9 @@ public class UserDAO {
     public boolean updatePassword(SqlSession session, String userId, String newPassword) {
     	try {
             int result = session.update("UserMapper.updatePassword", 
-            		
-               Map.of("userId", userId, "password", newPassword));
-            return result > 0;  // 1 이상이면 성공
+                Map.of("userId", userId, "password", newPassword));
+            session.commit();
+            return result > 0;
         } catch (Exception e) {
             logger.error("Error in updatePassword: ", e);
             return false;
@@ -115,38 +115,8 @@ public class UserDAO {
         return session.selectList("UserMapper.getAllUsers");
     }
     
-    public String findUserId(SqlSession session, User user) {
-        try {
-            return session.selectOne("UserMapper.findUserId", user);
-        } catch (Exception e) {
-            logger.error("Error in findUserId: ", e);
-            return null;
-        }
-    }
-    
-    public User findUserForPasswordReset(SqlSession session, User user) {
-        try {
-            Map<String, Object> paramMap = new HashMap<>();
-            paramMap.put("userId", user.getUserId());
-            paramMap.put("name", user.getUsername());
-            paramMap.put("phone", user.getPhonenumber());
-            paramMap.put("email", user.getEmail());
-            paramMap.put("birthdate", user.getBirthdate());
-
-            return session.selectOne("UserMapper.findUserForPasswordReset", paramMap);
-        } catch (Exception e) {
-            logger.error("Error in findUserForPasswordReset: ", e);
-            return null;
-        }
-    }
-    
-    public User findUserIdByInfo(SqlSession session, String name, String phone, String email, Date birthdate) {
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("username", name); // 주의: key 이름은 반드시 XML #{username}과 일치
-        paramMap.put("phonenumber", phone);
-        paramMap.put("email", email);
-        paramMap.put("birthdate", birthdate);
-        
-        return session.selectOne("UserMapper.findUserIdByInfo", paramMap);
+    public User findUserByInfo(SqlSession session, String name, String phone, String email, Date birthdate) {
+        return session.selectOne("UserMapper.findUserByInfo", 
+            Map.of("name", name, "phone", phone, "email", email, "birthdate", birthdate));
     }
 }

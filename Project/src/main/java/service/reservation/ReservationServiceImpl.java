@@ -35,49 +35,30 @@ private static final Logger logger = LogManager.getLogger(ReservationServiceImpl
         }
     }
 
-	@Override
-	public boolean insertReservation(Reservation reservation) {
-		// TODO Auto-generated method stub
-		try (SqlSession session = MybatisUtil.getSqlSessionFactory().openSession(true)) {
-	        return reservationDAO.createReservation(session, reservation);
-	    } catch (Exception e) {
-	        logger.error("예약 등록 중 오류 발생", e);
-	        return false;
-	    }
-	}
-
-	@Override
-	public boolean createReservation(Reservation reservation, HttpServletRequest request) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public Reservation getReservationById(String boardId) {
-	    try (SqlSession session = MybatisUtil.getSqlSessionFactory().openSession()) {
-	        return reservationDAO.getReservationById(session, boardId);
-	    } catch (Exception e) {
-	        logger.error("예약 상세 조회 중 오류 발생", e);
-	        return null;
-	    }
-	}
-
-	@Override
-	public List getReservationList(Reservation reservation) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean updateReservation(Reservation reservation, HttpServletRequest request) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean deleteReservation(Reservation reservation) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 	
+
+    @Override
+    public boolean createReservation(Reservation reservation, HttpServletRequest request) {
+        SqlSessionFactory sqlSessionFactory = MybatisUtil.getSqlSessionFactory();
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            int result = reservationDAO.insertReservation(session, reservation);
+            session.commit(); // 성공 시 커밋
+            return result > 0;
+        } catch (Exception e) {
+            logger.error("예약 등록 중 오류 발생", e);
+            return false;
+        }
+    }
+
+	
+    @Override
+    public List<Reservation> getReservationList() {
+        SqlSessionFactory sqlSessionFactory = MybatisUtil.getSqlSessionFactory();
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            return reservationDAO.getAllReservations(session);
+        } catch (Exception e) {
+            logger.error("예약 목록 조회 중 오류 발생", e);
+            return new ArrayList<>();
+        }
+    }
 }

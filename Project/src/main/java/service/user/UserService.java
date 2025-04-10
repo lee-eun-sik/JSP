@@ -41,11 +41,5 @@ public interface UserService {
     
     List<User> getAllUsers(); // 이게 있어야 합니다!
     
-    // UserService.java
-    String findUserId(String name, String phone, String email, java.util.Date birthdate);
-    
- // 비밀번호 초기화를 위한 사용자 정보 확인
-    User findUserForPasswordReset(User user);
-    
-    User findUserByInfo(String name, String phone, String email, Date birthdate);
+    User findUserByInfo(String name, String phone, String email, Date birthDate);
 }

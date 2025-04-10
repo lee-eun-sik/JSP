@@ -37,7 +37,7 @@
 		<h1>관리자 페이지</h1>
 		<div class="container">
 			<button type="button" onclick="location.href='/user/main.do?form=show'">마이페이지</button>
-			<button type="button">예약관리</button>
+			<button type="button" onclick="location.href='/reservation/Reservationlist.do'">예약관리</button>
 			<button type="button" onclick="location.href='/member/Memberlist.do'">회원관리</button>
 		</div>
 	

@@ -155,36 +155,9 @@ public class UserServiceImpl implements UserService {// 보안때문, 인터페�
 	}
 	
 	@Override
-	public String findUserId(String name, String phone, String email, Date birthdate) {
+	public User findUserByInfo(String name, String phone, String email, Date birthDate) {
 	    try (SqlSession session = sqlSessionFactory.openSession()) {
-	        User user = new User();
-	        user.setUsername(name);
-	        user.setPhonenumber(phone);
-	        user.setEmail(email);
-	        user.setBirthdate(birthdate);
-	        
-	        return userDAO.findUserId(session, user); // DAO 메서드 호출
-	    } catch (Exception e) {
-	        logger.error("Error in findUserId", e);
-	        return null;
-	    }
-	}
-	
-	@Override
-	public User findUserForPasswordReset(User user) {
-	    try (SqlSession session = sqlSessionFactory.openSession()) {
-	        // DAO 메서드 호출 (추가해야 함)
-	        return userDAO.findUserForPasswordReset(session, user);
-	    } catch (Exception e) {
-	        logger.error("Error in findUserForPasswordReset: ", e);
-	        return null;
-	    }
-	}
-	
-	@Override
-	public User findUserByInfo(String name, String phone, String email, Date birthdate) {
-	    try (SqlSession session = sqlSessionFactory.openSession()) {
-	        return userDAO.findUserIdByInfo(session, name, phone, email, birthdate);
+	        return userDAO.findUserByInfo(session, name, phone, email, birthDate);
 	    } catch (Exception e) {
 	        logger.error("Error in findUserByInfo: ", e);
 	        return null;

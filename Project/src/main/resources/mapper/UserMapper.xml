@@ -116,25 +116,12 @@
 	   WHERE DEL_YN = 'N'
 	</select>
 	
-	<!-- 사용자 아이디만 찾기 -->
-<select id="findUserId" resultType="java.lang.String" parameterType="model.user.User">
-    SELECT USER_ID
-    FROM USERS
-    WHERE USERNAME = #{username}
-      AND PHONENUMBER = #{phonenumber}
-      AND EMAIL = #{email}
-      AND BIRTH_DATE = #{birthdate}
-      AND DEL_YN = 'N'
-</select>
-
-<!-- 사용자 전체 정보 찾기 -->
-<select id="findUserIdByInfo" parameterType="map" resultMap="userResultMap">
-    SELECT * 
-    FROM USERS
-    WHERE USERNAME = #{username}
-      AND PHONENUMBER = #{phonenumber}
-      AND EMAIL = #{email}
-      AND BIRTH_DATE = #{birthdate}
-      AND DEL_YN = 'N'
-</select>
+	<select id="findUserByInfo" resultType="model.user.User" parameterType="map">
+	    SELECT *
+	    FROM users
+	    WHERE name = #{name}
+	      AND phone = #{phone}
+	      AND email = #{email}
+	      AND birthdate = #{birthdate}
+	</select>
 </mapper>

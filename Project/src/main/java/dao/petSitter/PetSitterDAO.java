@@ -1,8 +1,7 @@
 package dao.petSitter;
 
 import java.util.List;
-
-
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.logging.log4j.LogManager;
@@ -19,21 +18,20 @@ import model.board.Board;
 public class PetSitterDAO {
     private static final Logger logger = LogManager.getLogger(PetSitterDAO.class); // Logger 인스턴스 생성
    
- // 예약 가능한 펫시터 리스트 조회
     public List<PetSitter> getPetSitterList(SqlSession session) {
-    	 List<PetSitter> sitterList = session.selectList("PetSitterMapper.getPetSitterList");
-	     logger.info("DAO에서 가져온 펫시터 리스트: {}", sitterList);
-	     return sitterList;
-        
+        List<PetSitter> sitterList = session.selectList("PetSitterMapper.getPetSitterList");
+        logger.info("DAO에서 가져온 펫시터 리스트: {}", sitterList);
+        return sitterList;
     }
-    
 
-	public List<PetSitter> getAllPetSitters() {
-	    try (SqlSession session = MybatisUtil.getSqlSessionFactory().openSession()) {
-	        return getPetSitterList(session);
-	    } catch (Exception e) {
-	        logger.error("getAllPetSitters() 오류 발생", e);
-	        return null;
-	    }
-	}
+    public List<PetSitter> getAllPetSitters() {
+        try (SqlSession session = MybatisUtil.getSqlSessionFactory().openSession()) {
+            return getPetSitterList(session);
+        } catch (Exception e) {
+            logger.error("getAllPetSitters() 오류 발생", e);
+            return null;
+        }
+    }
+	
+	
 }  
