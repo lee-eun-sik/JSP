@@ -41,7 +41,7 @@ public interface UserService {
     
     List<User> getAllUsers(); // 이게 있어야 합니다!
     
-    User findUserByInfo(String name, String phone, String email, Date birthDate);
+    List<User> findUsersByInfo(String name, String phone, String email, Date birthDate);
 
 	User findUserByCredentials(String name, String userId, String phone, Date birthDateParsed);
 }

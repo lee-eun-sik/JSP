@@ -18,6 +18,7 @@ import util.MybatisUtil;
 
 public class UserDAO {
     private static final Logger logger = LogManager.getLogger(UserDAO.class); // Logger 인스턴스 생성
+	private static final String NAMESPACE = "UserMapper";
     private SqlSessionFactory sqlSessionFactory = MybatisUtil.getSqlSessionFactory(); // Mybatis 세션 팩토리 추가
     /**
      * 사용자 회원가입
@@ -115,9 +116,14 @@ public class UserDAO {
         return session.selectList("UserMapper.getAllUsers");
     }
     
-    public User findUserByInfo(SqlSession session, String name, String phone, String email, Date birthdate) {
-        return session.selectOne("UserMapper.findUserByInfo", 
-            Map.of("name", name, "phone", phone, "email", email, "birthdate", birthdate));
+    public List<User> findUserByInfo(SqlSession session, String name, String phone, String email, Date birthDate) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("name", name);
+        params.put("phone", phone);
+        params.put("email", email);
+        params.put("birthDate", birthDate);
+
+        return session.selectList(NAMESPACE + ".findUserByInfo", params);
     }
     
     public User findUserByCredentials(SqlSession session, String name, String userId, String phone, Date birthDate) {

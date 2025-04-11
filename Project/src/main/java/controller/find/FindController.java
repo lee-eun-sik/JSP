@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import jakarta.servlet.ServletException;
@@ -50,51 +52,52 @@ public class FindController extends HttpServlet {
         String path = uri.substring(contextPath.length()); // context path 제거
     	 
     	 response.setContentType("application/json; charset=UTF-8");
-    	    if ("/find/FindID.do".equals(path)) {
-    	        StringBuilder sb = new StringBuilder();
-    	        BufferedReader reader = request.getReader();
-    	        String line;
-    	        System.out.println(path);
-    	        while ((line = reader.readLine()) != null) {
-    	            sb.append(line);
-    	        }
-    	       
-    	        try {
-    	            JSONObject json = new JSONObject(sb.toString());
+    	 if ("/find/FindID.do".equals(path)) {
+    		    // 하나의 처리 로직만 유지
+    		    StringBuilder sb = new StringBuilder();
+    		    BufferedReader reader = request.getReader();
+    		    String line;
+    		    while ((line = reader.readLine()) != null) {
+    		        sb.append(line);
+    		    }
 
-    	            String name = json.getString("name");
-    	            String phone = json.getString("phone");
-    	            String email = json.getString("email");
-    	            String birthdateStr = json.getString("birthdate");
+    		    try {
+    		        JSONObject json = new JSONObject(sb.toString());
+    		        String name = json.getString("name");
+    		        String phone = json.getString("phone");
+    		       
+    		        String email = json.optString("email", ""); // email optional
+    		        String birthdateStr = json.getString("birthdate");
 
-    	            // MM/dd/yyyy -> yyyy-MM-dd
-    	            SimpleDateFormat inputFormat = new SimpleDateFormat("MM/dd/yyyy");
-    	            SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
-    	            Date birthdate = inputFormat.parse(birthdateStr);
-    	            String formattedBirthdate = outputFormat.format(birthdate);
-    	            Date birthDateParsed = outputFormat.parse(formattedBirthdate);
+    		        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+    		        Date birthDate = formatter.parse(birthdateStr);
 
-    	            User user = userService.findUserByInfo(name, phone, email, birthDateParsed);
-    	            
-    	            response.setContentType("application/json; charset=UTF-8");
-    	            PrintWriter out = response.getWriter();
+    		        List<User> userList = userService.findUsersByInfo(name, phone, email, birthDate);
 
-    	            if (user != null) {
-    	                JSONObject result = new JSONObject();
-    	                result.put("success", true);
-    	                result.put("userId", user.getUserId());
-    	                out.print(result.toString());
-    	            } else {
-    	                out.print("{\"success\": false}");
-    	            }
-    	            out.flush();
-    	            
-    	        } catch (Exception e) {
-    	            logger.error("아이디 찾기 오류", e);
-    	            
-    	            response.getWriter().print("{\"success\": false, \"message\": \"서버 오류\"}");
-    	        }
-    	    }else if ("/find/FindPw.do".equals(path)) {
+    		        JSONObject result = new JSONObject();
+    		        if (userList != null && !userList.isEmpty()) {
+    		            result.put("success", true);
+
+    		            JSONArray userIdArray = new JSONArray();
+    		            for (User u : userList) {
+    		                userIdArray.put(u.getUserId());
+    		            }
+
+    		            result.put("userId", userIdArray);
+    		        } else {
+    		            result.put("success", false);
+    		            result.put("message", "일치하는 사용자가 없습니다.");
+    		        }
+
+
+    		        response.setContentType("application/json");
+    		        response.getWriter().print(result.toString());
+
+    		    } catch (Exception e) {
+    		        logger.error("아이디 찾기 오류", e);
+    		        response.getWriter().print("{\"success\": false, \"message\": \"서버 오류\"}");
+    		    }
+    		}else if ("/find/FindPw.do".equals(path)) {
     	        StringBuilder sb = new StringBuilder();
     	        BufferedReader reader = request.getReader();
     	        String line;
@@ -107,6 +110,7 @@ public class FindController extends HttpServlet {
     	            String name = json.getString("name");
     	            String userId = json.getString("userId");
     	            String phone = json.getString("phone");
+    	            String email = json.optString("email", ""); // ✅ email도 받아오기
     	            String birthdateStr = json.getString("birthdate");
 
     	            SimpleDateFormat inputFormat = new SimpleDateFormat("MM/dd/yyyy");
@@ -115,22 +119,22 @@ public class FindController extends HttpServlet {
     	            String formattedBirthdate = outputFormat.format(birthdate);
     	            Date birthDateParsed = outputFormat.parse(formattedBirthdate);
 
-    	            User user = userService.findUserByCredentials(name, userId, phone, birthDateParsed);
+    	            List<User> users = userService.findUsersByInfo(name, phone, email, birthDateParsed);
 
-    	            PrintWriter out = response.getWriter();
-    	            if (user != null) {
-    	                JSONObject result = new JSONObject();
+    	            JSONObject result = new JSONObject();
+    	            if (users != null && !users.isEmpty()) {
+    	                User u = users.get(0); // 첫 번째 사용자만 사용
     	                result.put("success", true);
-    	                result.put("password", user.getPassword()); // 실제 서비스에서는 보안상 절대 안됨 (예: 임시 비밀번호 발급 등 필요)
-    	                out.print(result.toString());
+    	                result.put("userId", u.getUserId());
+    	                result.put("password", u.getPassword()); // 💡 단일 비밀번호 추가
     	            } else {
-    	                out.print("{\"success\": false}");
+    	                result.put("success", false);
     	            }
-    	            out.flush();
+    	            response.getWriter().print(result.toString());
     	        } catch (Exception e) {
     	            logger.error("비밀번호 찾기 오류", e);
     	            response.getWriter().print("{\"success\": false, \"message\": \"서버 오류\"}");
     	        }
-    	    }
+    	    } 
     }
 }

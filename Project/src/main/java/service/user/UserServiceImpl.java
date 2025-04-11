@@ -155,11 +155,11 @@ public class UserServiceImpl implements UserService {// 보안때문, 인터페�
 	}
 	
 	@Override
-	public User findUserByInfo(String name, String phone, String email, Date birthDate) {
+	public List<User> findUsersByInfo(String name, String phone, String email, Date birthDate) {
 	    try (SqlSession session = sqlSessionFactory.openSession()) {
 	        return userDAO.findUserByInfo(session, name, phone, email, birthDate);
 	    } catch (Exception e) {
-	        logger.error("Error in findUserByInfo: ", e);
+	        logger.error("Error in findUsersByInfo: ", e);
 	        return null;
 	    }
 	}
